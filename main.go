@@ -28,6 +28,10 @@ func (handler AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.NotFound(w, r)
 		case http.StatusUnauthorized:
 			http.Error(w, http.StatusText(status), status)
+		case http.StatusUnprocessableEntity:
+			http.Error(w, err.Error(), status)
+		case http.StatusBadRequest:
+			http.Error(w, err.Error(), status)
 		case http.StatusInternalServerError:
 			http.Error(w, http.StatusText(status), status)
 		default:
@@ -55,34 +59,42 @@ func main() {
 
 	mux.HandleFunc("GET /level", AppHandler{context, getAllLevels}.ServeHTTP)
 	mux.HandleFunc("GET /level/{id}", AppHandler{context, getLevelByID}.ServeHTTP)
+	mux.HandleFunc("POST /level", AppHandler{context, createLevel}.ServeHTTP)
 	mux.HandleFunc("DELETE /level/{id}", AppHandler{context, deleteLevelByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /subject", AppHandler{context, getAllSubjects}.ServeHTTP)
 	mux.HandleFunc("GET /subject/{id}", AppHandler{context, getSubjectByID}.ServeHTTP)
+	mux.HandleFunc("POST /subject", AppHandler{context, createSubject}.ServeHTTP)
 	mux.HandleFunc("DELETE /subject/{id}", AppHandler{context, deleteSubjectByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /user", AppHandler{context, getAllUsers}.ServeHTTP)
 	mux.HandleFunc("GET /user/{id}", AppHandler{context, getUserByID}.ServeHTTP)
+	mux.HandleFunc("POST /user", AppHandler{context, createUser}.ServeHTTP)
 	mux.HandleFunc("DELETE /user/{id}", AppHandler{context, deleteUserByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /tutor", AppHandler{context, getAllTutors}.ServeHTTP)
 	mux.HandleFunc("GET /tutor/{id}", AppHandler{context, getTutorByID}.ServeHTTP)
+	mux.HandleFunc("POST /tutor", AppHandler{context, createTutor}.ServeHTTP)
 	mux.HandleFunc("DELETE /tutor/{id}", AppHandler{context, deleteTutorByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /tuition_center", AppHandler{context, getAllTuitionCenters}.ServeHTTP)
 	mux.HandleFunc("GET /tuition_center/{id}", AppHandler{context, getTuitionCenterByID}.ServeHTTP)
+	mux.HandleFunc("POST /tuition_center", AppHandler{context, createTuitionCenter}.ServeHTTP)
 	mux.HandleFunc("DELETE /tuition_center/{id}", AppHandler{context, deleteTuitionCenterByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /rate", AppHandler{context, getAllRates}.ServeHTTP)
 	mux.HandleFunc("GET /rate/{id}", AppHandler{context, getRateByID}.ServeHTTP)
+	mux.HandleFunc("POST /rate", AppHandler{context, createRate}.ServeHTTP)
 	mux.HandleFunc("DELETE /rate/{id}", AppHandler{context, deleteRateByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /request", AppHandler{context, getAllRequests}.ServeHTTP)
 	mux.HandleFunc("GET /request/{id}", AppHandler{context, getRequestByID}.ServeHTTP)
+	mux.HandleFunc("POST /request", AppHandler{context, createRequest}.ServeHTTP)
 	mux.HandleFunc("DELETE /request/{id}", AppHandler{context, deleteRequestByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /qualification", AppHandler{context, getAllQualifications}.ServeHTTP)
 	mux.HandleFunc("GET /qualification/{id}", AppHandler{context, getQualificationByID}.ServeHTTP)
+	mux.HandleFunc("POST /qualification", AppHandler{context, createQualification}.ServeHTTP)
 	mux.HandleFunc("DELETE /qualification/{id}", AppHandler{context, deleteQualificationByID}.ServeHTTP)
 
 	fmt.Println("Server Started. Listening on port 8080")

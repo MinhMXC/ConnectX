@@ -106,7 +106,6 @@ func setup() {
     		age TINYINT NOT NULL,
     		phone TINYTEXT NOT NULL,
     		description TEXT,
-    		is_open BOOLEAN NOT NULL,
     		gender BOOLEAN NOT NULL,
     		created_at BIGINT NOT NULL,
     		PRIMARY KEY (id)
@@ -121,7 +120,6 @@ func setup() {
     		address_link TEXT NOT NULL,
     		description TEXT,
     		website TEXT,
-    		is_open BOOLEAN NOT NULL,
     		created_at BIGINT NOT NULL,
     		PRIMARY KEY (id)
 		)`)
@@ -147,34 +145,11 @@ func setup() {
     		CONSTRAINT dk_tct_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE
 		)`)
 
-	exec(db, "Creating table 'tuition_center_tutor_join'",
-		`CREATE TABLE tuition_center_subject_join (
-    		tuition_center_id INT NOT NULL,
-			subject_id SMALLINT NOT NULL,
-    		CONSTRAINT dk_tcs_tuition_center FOREIGN KEY (tuition_center_id) REFERENCES tuition_center(id) ON DELETE CASCADE,
-    		CONSTRAINT dk_tcs_subject FOREIGN KEY (subject_id) REFERENCES subject(id)
-		)`)
-
-	exec(db, "Creating table 'tutor_subject_join'",
-		`CREATE TABLE tutor_subject_join (
-			tutor_id INT NOT NULL,
-    		subject_id SMALLINT NOT NULL,
-    		CONSTRAINT fk_ts_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE,
-    		CONSTRAINT fk_ts_subject FOREIGN KEY (subject_id) REFERENCES subject(id)
-		)`)
-
-	exec(db, "Creating table 'tutor_qualification_join'",
-		`CREATE TABLE tutor_qualification_join (
-			tutor_id INT NOT NULL,
-    		qualification_id INT NOT NULL,
-    		CONSTRAINT fk_tq_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE,
-    		CONSTRAINT fk_tq_qualification FOREIGN KEY (qualification_id) REFERENCES qualification(id)
-		)`)
-
 	exec(db, "Creating table 'rate'",
 		`CREATE TABLE rate (
     		id INT NOT NULL AUTO_INCREMENT,
     		amount FLOAT NOT NULL,
+    		is_open BOOLEAN NOT NULL,
     		subject_id SMALLINT NOT NULL,
     		tutor_id INT,
     		tuition_center_id INT,
@@ -255,7 +230,7 @@ func setup() {
         	("H2 Chemistry", 6), ("H2 French", 6), ("H2 German", 6), ("H2 Japanese", 6), ("H2 Biology", 6),
         	("H2 Physics", 6), ("H2 Art", 6), ("H2 Geography", 6), ("H2 History", 6), ("H2 Music", 6),
         	("H2 Mathematics", 6), ("H2 Knowledge & Inquiry", 6),
-        	("H3 Literature", 6), ("H3 Economics", 6), ("H3 Chemistry", 6), ("H3 Physics", 6), ("H3 Biology", 6),
+        	("H3 Literature", 6), ("H3 Econom7ics", 6), ("H3 Chemistry", 6), ("H3 Physics", 6), ("H3 Biology", 6),
         	("H3 Art", 6), ("H3 Music", 6), ("H3 Mathematics", 6), ("H3 Geography", 6), ("H3 History", 6),
         	("H1 Chinese", 6), ("H1 Malay", 6), ("H1 Tamil", 6), ("H2 Translation (Chinese)", 6),
         	("H3 Chinese Language & Literature", 6), ("H2 Malay Language & Literature", 6), 
@@ -268,13 +243,13 @@ func setup() {
 		`INSERT INTO user (name, is_parent, gender, created_at) VALUES ("Minh", false, true, 1715872529)`)
 
 	exec(db, "Seeding table 'tutor'",
-		`INSERT INTO tutor (name, age, phone, description, is_open, gender, created_at) VALUES
-    	("Minh", 20, 12345678, "Hi my name is Minh and I play Final Fantasy", true, true, 1715872529)`)
+		`INSERT INTO tutor (name, age, phone, description, gender, created_at) VALUES
+    	("Minh", 20, 12345678, "Hi my name is Minh and I play Final Fantasy", true, 1715872529)`)
 
 	exec(db, "Seeding table 'tuition_center'",
-		`INSERT INTO tuition_center (name, phone, address, address_link, description, website, is_open, created_at) 
+		`INSERT INTO tuition_center (name, phone, address, address_link, description, website, created_at) 
 		VALUES ("Minh's Academy of Excellence", 12345678, "19 Kent Ridge Crescent 119278", "https://g.co/kgs/d98nKNE", 
-    	 "The school for top students only", "https://minhmxc.github.io/", true, 1715872529)`)
+    	 "The school for top students only", "https://minhmxc.github.io/", 1715872529)`)
 
 	exec(db, "Seeding table 'qualification'",
 		`INSERT INTO qualification (name, description, time, level_id, tutor_id) VALUES
@@ -283,17 +258,8 @@ func setup() {
 	exec(db, "Seeding table 'tuition_center_tutor_join'",
 		"INSERT INTO tuition_center_tutor_join VALUES (1, 1)")
 
-	exec(db, "Seeding table 'tuition_center_subject_join'",
-		"INSERT INTO tuition_center_subject_join VALUES (1, 1), (1, 2), (1, 3)")
-
-	exec(db, "Seeding table 'tutor_subject_join'",
-		"INSERT INTO tutor_subject_join VALUES (1, 1), (1, 2), (1, 3)")
-
-	exec(db, "Seeding table 'tutor_qualification_join'",
-		`INSERT INTO tutor_qualification_join VALUES (1, 1)`)
-
 	exec(db, "Seeding table 'rate'",
-		`INSERT INTO rate (amount, subject_id, tutor_id, tuition_center_id) VALUES (69, 1, 1, null), (420, 1, null, 1)`)
+		`INSERT INTO rate (amount, is_open, subject_id, tutor_id, tuition_center_id) VALUES (69, true, 1, 1, null), (420, false, 1, null, 1)`)
 
 	exec(db, "Seeding table 'request'",
 		`INSERT INTO request (description, rate, user_id, subject_id, level_id, created_at) VALUES
