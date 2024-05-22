@@ -45,4 +45,15 @@ var createTutor = createItemFactory[Tutor, TutorCreate](
 	},
 )
 
+var updateTutor = updateItemFactory[Tutor, TutorCreate](
+	"tutor",
+	func(item *TutorCreate) string {
+		return fmt.Sprintf("UPDATE tutor SET name = '%s', age = %d, phone = '%s', description = '%s', gender = %t",
+			item.Name, item.Age, item.Phone, item.Description, item.Gender)
+	},
+	func(item *Tutor, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description, &item.Gender, &item.CreatedAt)
+	},
+)
+
 var deleteTutorByID = deleteItemByIDFactory("tutor")

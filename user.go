@@ -39,4 +39,15 @@ var createUser = createItemFactory[User, UserCreate](
 	},
 )
 
+var updateUser = updateItemFactory[User, UserCreate](
+	"user",
+	func(item *UserCreate) string {
+		return fmt.Sprintf("UPDATE user SET name = '%s', is_parent = %t, gender = %t",
+			item.Name, item.IsParent, item.Gender)
+	},
+	func(item *User, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Name, &item.IsParent, &item.Gender, &item.CreatedAt)
+	},
+)
+
 var deleteUserByID = deleteItemByIDFactory("user")

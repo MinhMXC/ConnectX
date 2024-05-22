@@ -43,4 +43,15 @@ var createRequest = createItemFactory[Request, RequestCreate](
 	},
 )
 
+var updateRequest = updateItemFactory[Request, RequestCreate](
+	"request",
+	func(item *RequestCreate) string {
+		return fmt.Sprintf("UPDATE request SET description = '%s', rate = %f, user_id = %d, subject_id = %d, level_id = %d",
+			item.Description, item.Rate, item.UserID, item.SubjectID, item.LevelID)
+	},
+	func(item *Request, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Description, &item.Rate, &item.CreatedAt, &item.UserID, &item.SubjectID, &item.LevelID)
+	},
+)
+
 var deleteRequestByID = deleteItemByIDFactory("request")

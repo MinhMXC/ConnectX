@@ -34,4 +34,14 @@ var createSubject = createItemFactory[Subject, SubjectCreate](
 	},
 )
 
+var updateSubject = updateItemFactory[Subject, SubjectCreate](
+	"subject",
+	func(item *SubjectCreate) string {
+		return fmt.Sprintf("UPDATE subject SET name = '%s', level_id = %d", item.Name, item.LevelID)
+	},
+	func(item *Subject, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Name, &item.LevelID)
+	},
+)
+
 var deleteSubjectByID = deleteItemByIDFactory("subject")

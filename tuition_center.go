@@ -47,4 +47,15 @@ var createTuitionCenter = createItemFactory[TuitionCenter, TuitionCenterCreate](
 	},
 )
 
+var updateTuitionCenter = updateItemFactory[TuitionCenter, TuitionCenterCreate](
+	"tuition_center",
+	func(item *TuitionCenterCreate) string {
+		return fmt.Sprintf("UPDATE tuition_center SET name = '%s', phone = '%s', address = '%s', address_link = '%s', description = '%s', website = '%s'",
+			item.Name, item.Phone, item.Address, item.AddressLink, item.Description, item.Website)
+	},
+	func(item *TuitionCenter, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Name, &item.Phone, &item.Address, &item.AddressLink, &item.Description, &item.Website, &item.CreatedAt)
+	},
+)
+
 var deleteTuitionCenterByID = deleteItemByIDFactory("tuition_center")

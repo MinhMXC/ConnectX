@@ -41,4 +41,15 @@ var createQualification = createItemFactory[Qualification, QualificationCreate](
 	},
 )
 
+var updateQualification = updateItemFactory[Qualification, QualificationCreate](
+	"qualification",
+	func(item *QualificationCreate) string {
+		return fmt.Sprintf("UPDATE qualification SET name = '%s', description = '%s', time = %d, level_id = %d, tutor_id = %d",
+			item.Name, item.Description, item.Time, item.LevelID, item.TutorID)
+	},
+	func(item *Qualification, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Name, &item.Description, &item.Time, &item.LevelID, &item.TutorID)
+	},
+)
+
 var deleteQualificationByID = deleteItemByIDFactory("qualification")

@@ -46,4 +46,21 @@ var createRate = createItemFactory[Rate, RateCreate](
 	},
 )
 
+// TODO: add middleware to ensure that only one of tutor_id and tuition_center_id can be null
+var updateRate = updateItemFactory[Rate, RateCreate](
+	"rate",
+	func(item *RateCreate) string {
+		if item.TuitionCenterID == nil {
+			return fmt.Sprintf("UPDATE rate SET amount = %f, is_open = %t, subject_id = %d, tutor_id = %d, tuition_center_id = null",
+				item.Amount, item.IsOpen, item.SubjectID, *item.TutorID)
+		} else {
+			return fmt.Sprintf("UPDATE rate SET amount = %f, is_open = %t, subject_id = %d, tutor_id = null, tuition_center_id = %d",
+				item.Amount, item.IsOpen, item.SubjectID, *item.TuitionCenterID)
+		}
+	},
+	func(item *Rate, row *sql.Row) error {
+		return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
+	},
+)
+
 var deleteRateByID = deleteItemByIDFactory("rate")
