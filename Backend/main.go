@@ -18,6 +18,11 @@ type AppHandler struct {
 	H func(*AppContext, http.ResponseWriter, *http.Request) (int, error)
 }
 
+type Login struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (handler AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	status, err := handler.H(handler.AppContext, w, r)
@@ -71,6 +76,9 @@ func main() {
 
 	mux.HandleFunc("GET /user", AppHandler{context, getAllUsers}.ServeHTTP)
 	mux.HandleFunc("GET /user/{id}", AppHandler{context, getUserByID}.ServeHTTP)
+	mux.HandleFunc("POST /user/login", AppHandler{context, loginHandler}.ServeHTTP)
+	mux.HandleFunc("GET /user/verify", AppHandler{context, verifyHandler}.ServeHTTP)
+	mux.HandleFunc("GET /user/refresh", AppHandler{context, refreshHandler}.ServeHTTP)
 	mux.HandleFunc("POST /user", AppHandler{context, createUser}.ServeHTTP)
 	mux.HandleFunc("PATCH /user/{id}", AppHandler{context, updateUser}.ServeHTTP)
 	mux.HandleFunc("DELETE /user/{id}", AppHandler{context, deleteUserByID}.ServeHTTP)

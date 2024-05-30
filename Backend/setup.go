@@ -92,9 +92,9 @@ func setup() {
 	exec(db, "Creating table 'user'",
 		`CREATE TABLE user(
     		id INT NOT NULL AUTO_INCREMENT,
-    		name TINYTEXT NOT NULL,
+    		username VARCHAR(64) NOT NULL UNIQUE,
+    		password TINYTEXT NOT NULL,
     		is_parent BOOLEAN NOT NULL,
-    		gender BOOLEAN NOT NULL,
     		created_at BIGINT NOT NULL,
     		PRIMARY KEY (id)
 		)`)
@@ -174,6 +174,14 @@ func setup() {
     		created_at BIGINT NOT NULL
 		)`)
 
+	exec(db, "Creating table 'refresh'",
+		`CREATE TABLE refresh (
+    		refresh_token TINYTEXT NOT NULL,
+    		expiry BIGINT NOT NULL,
+    		user_id INT NOT NULL UNIQUE,
+    		CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+		)`)
+
 	// Seeding tables
 	exec(db, "Seeding table 'level'",
 		`INSERT INTO level (name) VALUES ("Primary"), ("N(T) Level"), ("N(A) Level"), ("O Level"), 
@@ -240,7 +248,7 @@ func setup() {
 		`)
 
 	exec(db, "Seeding table 'user'",
-		`INSERT INTO user (name, is_parent, gender, created_at) VALUES ("Minh", false, true, 1715872529)`)
+		`INSERT INTO user (username, password, is_parent, created_at) VALUES ("Minh", "1234", false, 1715872529)`)
 
 	exec(db, "Seeding table 'tutor'",
 		`INSERT INTO tutor (name, age, phone, description, gender, created_at) VALUES
