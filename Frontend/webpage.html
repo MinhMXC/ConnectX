@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectX - Tuition Listings</title>
+    <link rel="stylesheet" href="webpage.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ConnectX</h1>
+            <h2>Tuition Listings</h2>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <h3>Teacher Data</h3>
+            <ul class="teacher-list" id="teacher-list">
+                <!-- Add more stuff in the future with Javascript -->
+            </ul>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 ConnectX. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mock data provided will link to backend in the future 
+            const teachers = [
+                { name: "Minh", subject: "Mathematics",Qualification: "NUS Computer Science", experience: "10 years", image: "https://via.placeholder.com/80" },
+                { name: "Lu Yu", subject: "English", Qualification:"NUS Data Science and Economics" , experience: "8 years", image: "https://via.placeholder.com/80" },
+                { name: "Phone", subject: "Science", Qualification:"NUS Mathematics", experience: "5 years", image: "https://via.placeholder.com/80" }
+            ];
+
+            const teacherList = document.getElementById('teacher-list');
+
+            teachers.forEach(teacher => {
+                const listItem = document.createElement('li');
+
+                listItem.innerHTML = `
+                    <img src="${teacher.image}" alt="${teacher.name}">
+                    <div>
+                        <strong>${teacher.name}</strong>
+                        <span>Subject: ${teacher.subject}</span><br>
+                        <span>Qualification: ${teacher.Qualification}</span><br>
+                        <span>Experience: ${teacher.experience}</span>
+                    </div>
+                `;
+
+                teacherList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>
+

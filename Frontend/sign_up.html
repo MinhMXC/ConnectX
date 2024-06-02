@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="sign_up.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ConnectX</h1>
+            <h2>Sign up</h2>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <form action="/user" method="post">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <label for="is_parent">Are you a parent?</label>
+                <input type="checkbox" id="is_parent" name="is_parent">
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
