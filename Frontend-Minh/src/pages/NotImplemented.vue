@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<h1>Welcome to ConnectX!</h1>
+  <h1>This page is currently under construction!</h1>
 </template>
 
 <style scoped>

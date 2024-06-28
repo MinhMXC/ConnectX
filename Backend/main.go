@@ -107,6 +107,7 @@ func main() {
 
 	mux.HandleFunc("GET /user", AppHandler{context, getAllUsers}.ServeHTTP)
 	mux.HandleFunc("GET /user/{id}", AppHandler{context, getUserByID}.ServeHTTP)
+	mux.HandleFunc("POST /user/setup", AppHandler{context, userSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /user/{id}", AppHandler{context, updateUser}.ServeHTTP)
 
 	mux.HandleFunc("GET /tutor", AppHandler{context, getAllTutors}.ServeHTTP)

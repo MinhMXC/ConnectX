@@ -20,7 +20,7 @@ const textArray = [' students', ' tutors', ' tuition centers', ' learning'];
   align-items: center;
   flex-direction: column;
   height: 100%;
-  width: 40%;
+  width: 35%;
   padding: 20px;
   border-radius: 5px;
   box-sizing: border-box;
@@ -28,7 +28,7 @@ const textArray = [' students', ' tutors', ' tuition centers', ' learning'];
 }
 
 #welcome-connectx {
-  font-size: 70px;
+  font-size: 60px;
 }
 
 #we-empower-text {
@@ -37,5 +37,11 @@ const textArray = [' students', ' tutors', ' tuition centers', ' learning'];
 
 .is-typed {
   font-size: 30px;
+}
+
+@media screen and (max-width: 1280px) {
+  #welcome-connectx-container {
+    display: none;
+  }
 }
 </style>

@@ -14,10 +14,12 @@ const { post, data, status, loading } = useBackendPost("/user/login");
 const loginOnClick = async () => {
   await post({ email: email.value, password: password.value });
 
-  if (status.value === "Success" && data.value.user_type === -1 ) {
-    await router.push("/setup");
-  } else {
-    await router.push("/temp");
+  if (status.value === "Success") {
+    if (data.value.user_type === -1) {
+      await router.push("/setup");
+    } else {
+      await router.push("/temp");
+    }
   }
 }
 
@@ -53,4 +55,9 @@ const loginOnClick = async () => {
   flex-direction: column;
 }
 
+@media screen and (max-width: 1280px) {
+  #dis {
+    display: none;
+  }
+}
 </style>

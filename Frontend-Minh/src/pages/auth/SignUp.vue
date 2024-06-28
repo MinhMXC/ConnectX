@@ -7,7 +7,7 @@ import SignUpForm from "@/components/form/auth/SignUpForm.vue";
   <div id="signup-page-container">
     <ConnectXWelcome />
     <div id="signup-container">
-      <div style="width: 50%">
+      <div id="form-container">
         <p id="signup-on-connectx">Signing up on ConnectX</p>
         <p id="fill-in-credential">Fill in your account credentials below</p>
         <br />
@@ -40,5 +40,15 @@ import SignUpForm from "@/components/form/auth/SignUpForm.vue";
 
 #fill-in-credential {
   font-size: 20px;
+}
+
+#form-container {
+  width: 50%;
+}
+
+@media screen and (max-width: 1280px) {
+  #form-container {
+    width: 60%;
+  }
 }
 </style>

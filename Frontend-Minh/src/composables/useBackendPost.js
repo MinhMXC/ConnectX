@@ -17,6 +17,7 @@ export default function useBackendPost(url) {
             cache: "no-cache",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": $cookies.get("Authorization")
             },
             body: JSON.stringify(postData)
         });
