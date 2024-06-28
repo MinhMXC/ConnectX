@@ -3,57 +3,46 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 type Tutor struct {
-	ID          int    `json:"id"`
+	UserID      int    `json:"user_id"`
+	Username    string `json:"username"`
 	Name        string `json:"name"`
 	Age         int    `json:"age"`
+	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
 	Description string `json:"description"`
-	Gender      bool   `json:"gender"`
-	CreatedAt   int    `json:"created_at"`
+	CreatedAt   int64  `json:"created_at"`
 }
 
-type TutorCreate struct {
+type TutorUpdate struct {
 	Name        string `json:"name"`
 	Age         int    `json:"age"`
+	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
 	Description string `json:"description"`
-	Gender      bool   `json:"gender"`
 }
 
-var getAllTutors = getAllItemsFactory[Tutor]("tutor", func(item *Tutor, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description,
-		&item.Gender, &item.CreatedAt)
-})
+func scanTutorRows(item *Tutor, rows *sql.Rows) error {
+	var temp string
+	return rows.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+}
 
-var getTutorByID = getItemByIDFactory[Tutor]("tutor", func(item *Tutor, row *sql.Row) error {
-	return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description,
-		&item.Gender, &item.CreatedAt)
-})
+func scanTutorRow(item *Tutor, row *sql.Row) error {
+	var temp string
+	return row.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+}
 
-var createTutor = createItemFactory[Tutor, TutorCreate](
-	"tutor",
-	func(item *TutorCreate) string {
-		return fmt.Sprintf("INSERT INTO tutor (name, age, phone, description, gender, created_at) VALUES ('%s', %d, '%s', '%s', %t, %d)",
-			item.Name, item.Age, item.Phone, item.Description, item.Gender, time.Now().Unix())
+var getAllTutors = getAllItemsFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRows)
+
+var getTutorByID = getItemByIDFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRow)
+
+var updateTutor = updateItemFactory[Tutor, TutorUpdate](
+	"tutor INNER JOIN base_user ON base_user.id = tutor.user_id",
+	func(item *TutorUpdate) string {
+		return fmt.Sprintf("UPDATE tutor INNER JOIN base_user ON base_user.id = tutor.user_id SET name = '%s', age = %d, gender = %t, phone = '%s', description = '%s'",
+			item.Name, item.Age, item.Gender, item.Phone, item.Description)
 	},
-	func(item *Tutor, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description, &item.Gender, &item.CreatedAt)
-	},
+	scanTutorRow,
 )
-
-var updateTutor = updateItemFactory[Tutor, TutorCreate](
-	"tutor",
-	func(item *TutorCreate) string {
-		return fmt.Sprintf("UPDATE tutor SET name = '%s', age = %d, phone = '%s', description = '%s', gender = %t",
-			item.Name, item.Age, item.Phone, item.Description, item.Gender)
-	},
-	func(item *Tutor, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description, &item.Gender, &item.CreatedAt)
-	},
-)
-
-var deleteTutorByID = deleteItemByIDFactory("tutor")

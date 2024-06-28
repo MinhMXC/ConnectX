@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"strings"
+	"regexp"
 )
 
 // A factory method for getting all rows in a table.
@@ -47,7 +46,7 @@ func getAllItemsFactory[T any](tableName string, scanFn func(item *T, rows *sql.
 	return getAll
 }
 
-// A factory method for a row by ID in a table.
+// A factory method for a row by UserID in a table.
 //
 // tableName: name of the table in database.
 //
@@ -62,6 +61,9 @@ func getItemByIDFactory[T any](tableName string, scanFn func(item *T, rows *sql.
 		err := scanFn(item, row)
 		if errors.Is(err, sql.ErrNoRows) {
 			return http.StatusNotFound, err
+		}
+		if err != nil {
+			return http.StatusInternalServerError, err
 		}
 
 		err = json.NewEncoder(w).Encode(item)
@@ -90,60 +92,19 @@ func createItemFactory[T any, U any](
 	scanFn func(item *T, rows *sql.Row) error,
 ) func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
 	createItem := func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
-		ct := r.Header.Get("Content-Type")
-		if ct != "" {
-			mediaType := strings.ToLower(strings.TrimSpace(strings.Split(ct, ";")[0]))
-			if mediaType != "application/json" {
-				msg := "Content-Type header is not application/json"
-				return http.StatusUnsupportedMediaType, errors.New(msg)
-			}
-		}
-
-		r.Body = http.MaxBytesReader(w, r.Body, 1048576)
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-
-		item := new(U)
-		err := decoder.Decode(item)
+		item, httpCode, err := verifyJson[U](w, r)
 		if err != nil {
-			var syntaxError *json.SyntaxError
-			var unmarshalTypeError *json.UnmarshalTypeError
-
-			switch {
-			case errors.As(err, &syntaxError):
-				msg := fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.Is(err, io.ErrUnexpectedEOF):
-				msg := "Request body contains badly-formed JSON"
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.As(err, &unmarshalTypeError):
-				msg := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
-				return http.StatusBadRequest, errors.New(msg)
-			case strings.HasPrefix(err.Error(), "json: unknown field"):
-				fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
-				msg := fmt.Sprintf("Request body conatains unknown field %s", fieldName)
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.Is(err, io.EOF):
-				msg := "Request body must not be empty"
-				return http.StatusBadRequest, errors.New(msg)
-			case err.Error() == "http: request body too large":
-				msg := "Request body must not be larger than 1MB"
-				return http.StatusBadRequest, errors.New(msg)
-			default:
-				log.Print(err.Error())
-				return http.StatusInternalServerError, nil
-			}
-		}
-
-		err = decoder.Decode(&struct{}{})
-		if !errors.Is(err, io.EOF) {
-			msg := "Request body must only contain a single JSON object"
-			return http.StatusBadRequest, errors.New(msg)
+			return httpCode, err
 		}
 
 		query := queryFn(item)
 		res, err := context.db.Exec(query)
 		if err != nil {
+			match, _ := regexp.MatchString("Duplicate entry '.*' for key 'base_user\\.username'", err.Error())
+			if match {
+				return http.StatusBadRequest, errors.New("This username has already existed")
+			}
+
 			return http.StatusInternalServerError, err
 		}
 
@@ -181,65 +142,19 @@ func updateItemFactory[T any, U any](
 	scanFn func(item *T, rows *sql.Row) error,
 ) func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
 	updateItem := func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
-		var row *sql.Row
-		var err error
-
-		var exists bool
-		row = context.db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE id = %s", tableName, r.PathValue("id")))
-		if err := row.Scan(&exists); err != nil {
-			log.Println("here")
-			return http.StatusNotFound, err
-		}
-
-		ct := r.Header.Get("Content-Type")
-		if ct != "" {
-			mediaType := strings.ToLower(strings.TrimSpace(strings.Split(ct, ";")[0]))
-			if mediaType != "application/json" {
-				msg := "Content-Type header is not application/json"
-				return http.StatusUnsupportedMediaType, errors.New(msg)
-			}
-		}
-
-		r.Body = http.MaxBytesReader(w, r.Body, 1048576)
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-
-		item := new(U)
-		err = decoder.Decode(item)
+		item, httpCode, err := verifyJson[U](w, r)
 		if err != nil {
-			var syntaxError *json.SyntaxError
-			var unmarshalTypeError *json.UnmarshalTypeError
-
-			switch {
-			case errors.As(err, &syntaxError):
-				msg := fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.Is(err, io.ErrUnexpectedEOF):
-				msg := "Request body contains badly-formed JSON"
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.As(err, &unmarshalTypeError):
-				msg := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
-				return http.StatusBadRequest, errors.New(msg)
-			case strings.HasPrefix(err.Error(), "json: unknown field"):
-				fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
-				msg := fmt.Sprintf("Request body conatains unknown field %s", fieldName)
-				return http.StatusBadRequest, errors.New(msg)
-			case errors.Is(err, io.EOF):
-				msg := "Request body must not be empty"
-				return http.StatusBadRequest, errors.New(msg)
-			case err.Error() == "http: request body too large":
-				msg := "Request body must not be larger than 1MB"
-				return http.StatusBadRequest, errors.New(msg)
-			default:
-				log.Print(err.Error())
-				return http.StatusInternalServerError, nil
-			}
+			return httpCode, err
 		}
 
-		err = decoder.Decode(&struct{}{})
-		if !errors.Is(err, io.EOF) {
-			msg := "Request body must only contain a single JSON object"
-			return http.StatusBadRequest, errors.New(msg)
+		row := context.db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE id = %s", tableName, r.PathValue("id")))
+		initialItem := new(T)
+		err = scanFn(initialItem, row)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return http.StatusNotFound, err
+			}
+			return http.StatusInternalServerError, err
 		}
 
 		query := fmt.Sprintf("%s WHERE id = %s", queryFn(item), r.PathValue("id"))
@@ -249,7 +164,8 @@ func updateItemFactory[T any, U any](
 		}
 
 		newID, _ := res.RowsAffected()
-		row = context.db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE id = %d", tableName, newID))
+		log.Println(newID)
+		row = context.db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE id = %s", tableName, r.PathValue("id")))
 
 		// UPDATE where every value remains the same will return a newID of 0
 		// as it is not considered a change
@@ -274,7 +190,7 @@ func updateItemFactory[T any, U any](
 	return updateItem
 }
 
-// A factory method for deleting a row by ID in a table.
+// A factory method for deleting a row by UserID in a table.
 //
 // tableName: name of the table in database.
 //

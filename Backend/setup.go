@@ -89,39 +89,49 @@ func setup() {
 			CONSTRAINT fk_subject_level FOREIGN KEY (level_id) REFERENCES level(id)
 		)`)
 
-	exec(db, "Creating table 'user'",
-		`CREATE TABLE user(
+	exec(db, "Creating table 'base_user'",
+		`CREATE TABLE base_user(
     		id INT NOT NULL AUTO_INCREMENT,
-    		username VARCHAR(64) NOT NULL UNIQUE,
+    		email VARCHAR(64) NOT NULL UNIQUE,
     		password TINYTEXT NOT NULL,
-    		is_parent BOOLEAN NOT NULL,
+    		user_type TINYINT DEFAULT -1,
     		created_at BIGINT NOT NULL,
     		PRIMARY KEY (id)
+		)`)
+
+	// Gender == False => Male; True => Female; Null => Others
+	exec(db, "Creating table 'user'",
+		`CREATE TABLE user(
+    		user_id INT NOT NULL,
+    		is_parent BOOLEAN NOT NULL,
+    		gender BOOLEAN,
+    		PRIMARY KEY (user_id),
+            CONSTRAINT fk_user_base_user FOREIGN KEY (user_id) REFERENCES base_user(id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'tutor'",
 		`CREATE TABLE tutor (
-    		id INT NOT NULL AUTO_INCREMENT,
+    		user_id INT NOT NULL,
     		name TINYTEXT NOT NULL,
     		age TINYINT NOT NULL,
+    		gender BOOLEAN,
     		phone TINYTEXT NOT NULL,
     		description TEXT,
-    		gender BOOLEAN NOT NULL,
-    		created_at BIGINT NOT NULL,
-    		PRIMARY KEY (id)
+    		PRIMARY KEY (user_id),
+    		CONSTRAINT fk_tutor_base_user FOREIGN KEY (user_id) REFERENCES base_user(id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'tuition_center'",
 		`CREATE TABLE tuition_center(
-    		id iNT NOT NULL AUTO_INCREMENT,
+    		user_id iNT NOT NULL,
     		name TINYTEXT NOT NULL,
     		phone TINYTEXT NOT NULL,
     		address TEXT NOT NULL,
     		address_link TEXT NOT NULL,
     		description TEXT,
     		website TEXT,
-    		created_at BIGINT NOT NULL,
-    		PRIMARY KEY (id)
+    		PRIMARY KEY (user_id),
+    		CONSTRAINT fk_tuition_center_base_user FOREIGN KEY (user_id) REFERENCES base_user(id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'qualification'",
@@ -134,15 +144,15 @@ func setup() {
     		level_id TINYINT NOT NULL,
     		tutor_id INT NOT NULL,
     		CONSTRAINT fk_qualification_level FOREIGN KEY (level_id) REFERENCES level(id),
-    		CONSTRAINT fk_qualification_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE
+    		CONSTRAINT fk_qualification_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(user_id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'tuition_center_tutor_join'",
 		`CREATE TABLE tuition_center_tutor_join (
     		tuition_center_id INT NOT NULL,
 			tutor_id INT NOT NULL,
-    		CONSTRAINT dk_tct_tuition_center FOREIGN KEY (tuition_center_id) REFERENCES tuition_center(id) ON DELETE CASCADE,
-    		CONSTRAINT dk_tct_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE
+    		CONSTRAINT dk_tct_tuition_center FOREIGN KEY (tuition_center_id) REFERENCES tuition_center(user_id) ON DELETE CASCADE,
+    		CONSTRAINT dk_tct_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(user_id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'rate'",
@@ -155,8 +165,8 @@ func setup() {
     		tuition_center_id INT,
     		PRIMARY KEY (id),
     		CONSTRAINT fk_rate_subject FOREIGN KEY (subject_id) REFERENCES subject(id),
-    		CONSTRAINT fk_rate_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(id) ON DELETE CASCADE,
-    		CONSTRAINT fk_rate_tuition_center FOREIGN KEY (tuition_center_id) REFERENCES tuition_center(id) ON DELETE CASCADE
+    		CONSTRAINT fk_rate_tutor FOREIGN KEY (tutor_id) REFERENCES tutor(user_id) ON DELETE CASCADE,
+    		CONSTRAINT fk_rate_tuition_center FOREIGN KEY (tuition_center_id) REFERENCES tuition_center(user_id) ON DELETE CASCADE
 		)`)
 
 	exec(db, "Creating table 'request'",
@@ -168,7 +178,7 @@ func setup() {
     		subject_id SMALLINT NOT NULL,
     		level_id TINYINT NOT NULL,
     		PRIMARY KEY (id),
-    		CONSTRAINT fk_request_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    		CONSTRAINT fk_request_user FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
     		CONSTRAINT fk_request_subject FOREIGN KEY (subject_id) REFERENCES subject(id),
     		CONSTRAINT fk_request_level FOREIGN KEY (level_id) REFERENCES level(id),
     		created_at BIGINT NOT NULL
@@ -178,8 +188,8 @@ func setup() {
 		`CREATE TABLE refresh (
     		refresh_token TINYTEXT NOT NULL,
     		expiry BIGINT NOT NULL,
-    		user_id INT NOT NULL UNIQUE,
-    		CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    		base_user_id INT NOT NULL UNIQUE,
+    		CONSTRAINT fk_refresh_user FOREIGN KEY (base_user_id) REFERENCES base_user(id) ON DELETE CASCADE
 		)`)
 
 	// Seeding tables
@@ -247,27 +257,31 @@ func setup() {
         	("H1 Tamil B", 6), ("H1 Project Work", 6)
 		`)
 
+	exec(db, "Seeding table 'base_user'",
+		`INSERT INTO base_user (email, password, user_type, created_at) VALUES
+		("Minh", "1234", 0, 1715872529), ("MinhTutor", "1234", 1, 1715872529), ("MinhTuitionCenter", "1234", 2, 1715872529)`)
+
 	exec(db, "Seeding table 'user'",
-		`INSERT INTO user (username, password, is_parent, created_at) VALUES ("Minh", "1234", false, 1715872529)`)
+		`INSERT INTO user (user_id, is_parent, gender) VALUES (1, false, false)`)
 
 	exec(db, "Seeding table 'tutor'",
-		`INSERT INTO tutor (name, age, phone, description, gender, created_at) VALUES
-    	("Minh", 20, 12345678, "Hi my name is Minh and I play Final Fantasy", true, 1715872529)`)
+		`INSERT INTO tutor (user_id, name, age, phone, description, gender) VALUES
+    	(2, "Minh", 20, 12345678, "Hi my name is Minh and I play Final Fantasy", true)`)
 
 	exec(db, "Seeding table 'tuition_center'",
-		`INSERT INTO tuition_center (name, phone, address, address_link, description, website, created_at) 
-		VALUES ("Minh's Academy of Excellence", 12345678, "19 Kent Ridge Crescent 119278", "https://g.co/kgs/d98nKNE", 
-    	 "The school for top students only", "https://minhmxc.github.io/", 1715872529)`)
+		`INSERT INTO tuition_center (user_id, name, phone, address, address_link, description, website) 
+		VALUES (3, "Minh's Academy of Excellence", 12345678, "19 Kent Ridge Crescent 119278", "https://g.co/kgs/d98nKNE", 
+    	 "The school for top students only", "https://minhmxc.github.io/")`)
 
 	exec(db, "Seeding table 'qualification'",
 		`INSERT INTO qualification (name, description, time, level_id, tutor_id) VALUES
-    	("A Level", "86.25/90", 1672531200, 6, 1)`)
+    	("A Level", "86.25/90", 1672531200, 6, 2)`)
 
 	exec(db, "Seeding table 'tuition_center_tutor_join'",
-		"INSERT INTO tuition_center_tutor_join VALUES (1, 1)")
+		"INSERT INTO tuition_center_tutor_join VALUES (3, 2)")
 
 	exec(db, "Seeding table 'rate'",
-		`INSERT INTO rate (amount, is_open, subject_id, tutor_id, tuition_center_id) VALUES (69, true, 1, 1, null), (420, false, 1, null, 1)`)
+		`INSERT INTO rate (amount, is_open, subject_id, tutor_id, tuition_center_id) VALUES (69, true, 1, 2, null), (420, false, 1, null, 3)`)
 
 	exec(db, "Seeding table 'request'",
 		`INSERT INTO request (description, rate, user_id, subject_id, level_id, created_at) VALUES
