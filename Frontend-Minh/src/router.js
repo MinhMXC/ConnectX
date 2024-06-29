@@ -15,7 +15,8 @@ const routes = [
     { path: '/setup/user', component: UserSetup },
     { path: '/setup/tutor', component: TutorSetup },
     { path: '/setup/tuition_center', component: TuitionCenterSetup },
-    { path: '/temp', component: NotImplemented }
+    { path: '/temp', component: NotImplemented },
+    { path: '/', redirect: '/auth/login' },
 ]
 
 const router = createRouter({

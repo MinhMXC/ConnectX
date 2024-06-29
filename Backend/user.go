@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type User struct {
@@ -14,7 +16,7 @@ type User struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-type UserUpdate struct {
+type UserCreate struct {
 	IsParent bool `json:"is_parent"`
 	Gender   bool `json:"gender"`
 }
@@ -30,7 +32,7 @@ func scanUserRow(item *User, row *sql.Row) error {
 }
 
 func userSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
-	data, status, err := verifyJson[UserUpdate](w, r)
+	data, status, err := verifyJson[UserCreate](w, r)
 	if status != 200 {
 		return status, err
 	}
@@ -40,9 +42,22 @@ func userSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int
 		return http.StatusUnauthorized, err
 	}
 
+	res := context.db.QueryRow(fmt.Sprintf("SELECT user_type FROM base_user WHERE id = %d", user.ID))
+	var userType int
+	err = res.Scan(&userType)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	if userType >= 0 {
+		return http.StatusBadRequest, errors.New("You have already went through setup")
+	}
+
 	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO user (user_id, is_parent, gender) VALUES (%d, %t, %t)",
 		user.ID, data.IsParent, data.Gender))
 	if err != nil {
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			return http.StatusBadRequest, errors.New("You have already went through setup")
+		}
 		return http.StatusInternalServerError, err
 	}
 
@@ -58,9 +73,9 @@ var getAllUsers = getAllItemsFactory[User]("user INNER JOIN base_user ON base_us
 
 var getUserByID = getItemByIDFactory[User]("user INNER JOIN base_user ON base_user.id = user.user_id", scanUserRow)
 
-var updateUser = updateItemFactory[User, UserUpdate](
+var updateUser = updateItemFactory[User, UserCreate](
 	"user INNER JOIN base_user ON base_user.id = user.user_id",
-	func(item *UserUpdate) string {
+	func(item *UserCreate) string {
 		return fmt.Sprintf("UPDATE user INNER JOIN base_user ON base_user.id = user.user_id SET is_parent = %t, gender = %t",
 			item.IsParent, item.Gender)
 	},

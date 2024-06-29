@@ -35,7 +35,7 @@ const signupOnClick = async () => {
       Thank you for registering an account at Connect X. <br />
       Please
       <RouterLink to="/auth/login">click here</RouterLink>
-      to go back to the login page <br />
+      to go back to the login page
       and login to your new account
     </p>
     <Button

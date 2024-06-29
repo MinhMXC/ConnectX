@@ -112,10 +112,12 @@ func main() {
 
 	mux.HandleFunc("GET /tutor", AppHandler{context, getAllTutors}.ServeHTTP)
 	mux.HandleFunc("GET /tutor/{id}", AppHandler{context, getTutorByID}.ServeHTTP)
+	mux.HandleFunc("POST /tutor/setup", AppHandler{context, tutorSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /tutor/{id}", AppHandler{context, updateTutor}.ServeHTTP)
 
 	mux.HandleFunc("GET /tuition_center", AppHandler{context, getAllTuitionCenters}.ServeHTTP)
 	mux.HandleFunc("GET /tuition_center/{id}", AppHandler{context, getTuitionCenterByID}.ServeHTTP)
+	mux.HandleFunc("POST /tuition_center/setup", AppHandler{context, tuitionCenterSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /tuition_center/{id}", AppHandler{context, updateTuitionCenter}.ServeHTTP)
 
 	mux.HandleFunc("GET /rate", AppHandler{context, getAllRates}.ServeHTTP)

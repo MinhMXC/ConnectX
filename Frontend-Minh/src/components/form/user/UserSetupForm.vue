@@ -5,8 +5,9 @@ import Button from "primevue/button";
 import CXSelect from "@/components/form_input/CXSelect.vue";
 import useBackendPost from "@/composables/useBackendPost.js";
 import FormStatusText from "@/components/FormStatusText.vue";
+import router from "@/router.js";
 
-const gender = ref("");
+const gender = ref("Male");
 const isParent = ref(false);
 const genderOptions = [ "Male", "Female", "Others" ]
 
@@ -17,6 +18,10 @@ const submitOnClick = async () => {
     gender: gender.value === "Others" ? null : gender.value === "Female",
     is_parent: isParent.value
   });
+
+  if (status === "Success") {
+    await router.push("/temp");
+  }
 }
 </script>
 
