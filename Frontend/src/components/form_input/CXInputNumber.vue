@@ -7,7 +7,7 @@ const model = defineModel()
 
 <template>
   <div style="display: flex; align-items: center">
-    <p style="margin-right: 10px; font-size: 18px; width: 20%">{{ props.label }}:</p>
+    <p style="margin-right: 10px; font-size: 18px; width: 25%">{{ props.label }}:</p>
     <InputNumber v-model="model" :placeholder="props.label" :prefix="props.prefix" :format="props.format"
                  input-class="p-inputtext-lg" style="width: 100%" />
   </div>

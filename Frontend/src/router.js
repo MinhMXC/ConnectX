@@ -7,6 +7,8 @@ import UserSetup from "@/pages/setup/UserSetup.vue";
 import TutorSetup from "@/pages/setup/TutorSetup.vue";
 import TuitionCenterSetup from "@/pages/setup/TuitionCenterSetup.vue";
 import NotImplemented from "@/pages/NotImplemented.vue";
+import LandingPage from "@/pages/LandingPage.vue";
+import TeacherDisplay from "@/components/teacher/TeacherDisplay.vue";
 
 const routes = [
     { path: '/auth/login', component: Login },
@@ -16,7 +18,8 @@ const routes = [
     { path: '/setup/tutor', component: TutorSetup },
     { path: '/setup/tuition_center', component: TuitionCenterSetup },
     { path: '/temp', component: NotImplemented },
-    { path: '/', redirect: '/auth/login' },
+    { path: '/', component: LandingPage },
+    { path: '/teacher', component: TeacherDisplay }
 ]
 
 const router = createRouter({

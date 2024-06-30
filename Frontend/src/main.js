@@ -18,7 +18,6 @@ app.use(VueCookies, {
     secure: 'true',
     sameSite: 'Strict'
 })
-
 app.use(router);
 
 app.mount('#app');
