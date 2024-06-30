@@ -2,58 +2,88 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
-	"time"
+	"net/http"
+	"strings"
 )
 
 type Tutor struct {
-	ID          int    `json:"id"`
+	UserID      int    `json:"user_id"`
+	Username    string `json:"username"`
 	Name        string `json:"name"`
 	Age         int    `json:"age"`
+	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
 	Description string `json:"description"`
-	Gender      bool   `json:"gender"`
-	CreatedAt   int    `json:"created_at"`
+	CreatedAt   int64  `json:"created_at"`
 }
 
 type TutorCreate struct {
 	Name        string `json:"name"`
 	Age         int    `json:"age"`
+	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
 	Description string `json:"description"`
-	Gender      bool   `json:"gender"`
 }
 
-var getAllTutors = getAllItemsFactory[Tutor]("tutor", func(item *Tutor, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description,
-		&item.Gender, &item.CreatedAt)
-})
+func scanTutorRows(item *Tutor, rows *sql.Rows) error {
+	var temp string
+	return rows.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+}
 
-var getTutorByID = getItemByIDFactory[Tutor]("tutor", func(item *Tutor, row *sql.Row) error {
-	return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description,
-		&item.Gender, &item.CreatedAt)
-})
+func scanTutorRow(item *Tutor, row *sql.Row) error {
+	var temp string
+	return row.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+}
 
-var createTutor = createItemFactory[Tutor, TutorCreate](
-	"tutor",
-	func(item *TutorCreate) string {
-		return fmt.Sprintf("INSERT INTO tutor (name, age, phone, description, gender, created_at) VALUES ('%s', %d, '%s', '%s', %t, %d)",
-			item.Name, item.Age, item.Phone, item.Description, item.Gender, time.Now().Unix())
-	},
-	func(item *Tutor, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description, &item.Gender, &item.CreatedAt)
-	},
-)
+var getAllTutors = getAllItemsFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRows)
+
+var getTutorByID = getItemByIDFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRow)
+
+func tutorSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
+	data, status, err := verifyJson[TutorCreate](w, r)
+	if status != 200 {
+		return status, err
+	}
+
+	user, err := authorize(w, r, false)
+	if err != nil {
+		return http.StatusUnauthorized, err
+	}
+
+	res := context.db.QueryRow(fmt.Sprintf("SELECT user_type FROM base_user WHERE id = %d", user.ID))
+	var userType int
+	err = res.Scan(&userType)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	if userType >= 0 {
+		return http.StatusBadRequest, errors.New("You have already went through setup")
+	}
+
+	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO tutor (user_id, name, age, gender, phone, description) VALUES (%d, '%s', %d, %t, '%s', '%s')",
+		user.ID, data.Name, data.Age, data.Gender, data.Phone, data.Description))
+	if err != nil {
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			return http.StatusBadRequest, errors.New("You have already went through setup")
+		}
+		return http.StatusInternalServerError, err
+	}
+
+	_, err = context.db.Exec(fmt.Sprintf("UPDATE base_user SET user_type = 2 WHERE id = %d", user.ID))
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
+}
 
 var updateTutor = updateItemFactory[Tutor, TutorCreate](
-	"tutor",
+	"tutor INNER JOIN base_user ON base_user.id = tutor.user_id",
 	func(item *TutorCreate) string {
-		return fmt.Sprintf("UPDATE tutor SET name = '%s', age = %d, phone = '%s', description = '%s', gender = %t",
-			item.Name, item.Age, item.Phone, item.Description, item.Gender)
+		return fmt.Sprintf("UPDATE tutor INNER JOIN base_user ON base_user.id = tutor.user_id SET name = '%s', age = %d, gender = %t, phone = '%s', description = '%s'",
+			item.Name, item.Age, item.Gender, item.Phone, item.Description)
 	},
-	func(item *Tutor, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Name, &item.Age, &item.Phone, &item.Description, &item.Gender, &item.CreatedAt)
-	},
+	scanTutorRow,
 )
-
-var deleteTutorByID = deleteItemByIDFactory("tutor")

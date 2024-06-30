@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -18,29 +19,49 @@ type AppHandler struct {
 	H func(*AppContext, http.ResponseWriter, *http.Request) (int, error)
 }
 
-type Login struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+func handleOptions(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+	w.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Accept, Authorization, content-type, X-Requested-With")
+	w.Header().Add("Access-Control-Max-Age", "86400")
+	w.WriteHeader(http.StatusOK)
+	return
 }
 
 func (handler AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+	w.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Accept, Authorization, content-type, X-Requested-With")
+	w.Header().Add("Access-Control-Expose-Headers", "Authorization, Refresh-Token")
+	w.Header().Add("Access-Control-Max-Age", "86400")
+
 	status, err := handler.H(handler.AppContext, w, r)
+
 	if err != nil {
 		log.Printf("HTTP %d: %q", status, err)
+
+		var errorText string
+
 		switch status {
 		case http.StatusNotFound:
-			http.NotFound(w, r)
+			errorText = http.StatusText(status)
 		case http.StatusUnauthorized:
-			http.Error(w, http.StatusText(status), status)
+			errorText = err.Error()
 		case http.StatusUnprocessableEntity:
-			http.Error(w, err.Error(), status)
+			errorText = err.Error()
 		case http.StatusBadRequest:
-			http.Error(w, err.Error(), status)
+			errorText = err.Error()
 		case http.StatusInternalServerError:
-			http.Error(w, http.StatusText(status), status)
+			errorText = http.StatusText(status)
 		default:
 			http.Error(w, http.StatusText(status), status)
+		}
+
+		w.WriteHeader(status)
+		errJson := json.NewEncoder(w).Encode(map[string]string{"error": errorText})
+		if errJson != nil {
+			http.Error(w, "", http.StatusInternalServerError)
 		}
 	}
 }
@@ -62,6 +83,8 @@ func main() {
 	context := &AppContext{db: db}
 	defer db.Close()
 
+	mux.HandleFunc("OPTIONS /", handleOptions)
+
 	mux.HandleFunc("GET /level", AppHandler{context, getAllLevels}.ServeHTTP)
 	mux.HandleFunc("GET /level/{id}", AppHandler{context, getLevelByID}.ServeHTTP)
 	mux.HandleFunc("POST /level", AppHandler{context, createLevel}.ServeHTTP)
@@ -74,26 +97,28 @@ func main() {
 	mux.HandleFunc("PATCH /subject/{id}", AppHandler{context, updateSubject}.ServeHTTP)
 	mux.HandleFunc("DELETE /subject/{id}", AppHandler{context, deleteSubjectByID}.ServeHTTP)
 
-	mux.HandleFunc("GET /user", AppHandler{context, getAllUsers}.ServeHTTP)
-	mux.HandleFunc("GET /user/{id}", AppHandler{context, getUserByID}.ServeHTTP)
+	mux.HandleFunc("POST /user", AppHandler{context, signupHandler}.ServeHTTP)
 	mux.HandleFunc("POST /user/login", AppHandler{context, loginHandler}.ServeHTTP)
+	mux.HandleFunc("GET /user/logout", AppHandler{context, logoutHandler}.ServeHTTP)
 	mux.HandleFunc("GET /user/verify", AppHandler{context, verifyHandler}.ServeHTTP)
 	mux.HandleFunc("GET /user/refresh", AppHandler{context, refreshHandler}.ServeHTTP)
-	mux.HandleFunc("POST /user", AppHandler{context, createUser}.ServeHTTP)
+	mux.HandleFunc("PATCH /user/change_password", AppHandler{context, changePasswordHandler}.ServeHTTP)
+	mux.HandleFunc("DELETE /user", AppHandler{context, deleteBaseUserHandler}.ServeHTTP)
+
+	mux.HandleFunc("GET /user", AppHandler{context, getAllUsers}.ServeHTTP)
+	mux.HandleFunc("GET /user/{id}", AppHandler{context, getUserByID}.ServeHTTP)
+	mux.HandleFunc("POST /user/setup", AppHandler{context, userSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /user/{id}", AppHandler{context, updateUser}.ServeHTTP)
-	mux.HandleFunc("DELETE /user/{id}", AppHandler{context, deleteUserByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /tutor", AppHandler{context, getAllTutors}.ServeHTTP)
 	mux.HandleFunc("GET /tutor/{id}", AppHandler{context, getTutorByID}.ServeHTTP)
-	mux.HandleFunc("POST /tutor", AppHandler{context, createTutor}.ServeHTTP)
+	mux.HandleFunc("POST /tutor/setup", AppHandler{context, tutorSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /tutor/{id}", AppHandler{context, updateTutor}.ServeHTTP)
-	mux.HandleFunc("DELETE /tutor/{id}", AppHandler{context, deleteTutorByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /tuition_center", AppHandler{context, getAllTuitionCenters}.ServeHTTP)
 	mux.HandleFunc("GET /tuition_center/{id}", AppHandler{context, getTuitionCenterByID}.ServeHTTP)
-	mux.HandleFunc("POST /tuition_center", AppHandler{context, createTuitionCenter}.ServeHTTP)
+	mux.HandleFunc("POST /tuition_center/setup", AppHandler{context, tuitionCenterSetup}.ServeHTTP)
 	mux.HandleFunc("PATCH /tuition_center/{id}", AppHandler{context, updateTuitionCenter}.ServeHTTP)
-	mux.HandleFunc("DELETE /tuition_center/{id}", AppHandler{context, deleteTuitionCenterByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /rate", AppHandler{context, getAllRates}.ServeHTTP)
 	mux.HandleFunc("GET /rate/{id}", AppHandler{context, getRateByID}.ServeHTTP)

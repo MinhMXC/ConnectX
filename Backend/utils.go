@@ -14,41 +14,74 @@ import (
 )
 
 type MyCustomClaims struct {
+	ID       int    `json:"id"`
 	Username string `json:"username"`
-	jwt.MapClaims
+	jwt.RegisteredClaims
 }
 
 var secretKey = []byte("secret")
 
-func createToken(username string) (string, error) {
+func attachToken(id int, username string, w http.ResponseWriter) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss":      "connectx",
+		"id":       id,
 		"username": username,
-		"exp":      time.Now().Add(time.Minute * 5).Unix(),
+		"iss":      "connectx",
+		"exp":      time.Now().Add(time.Minute * 30).Unix(),
 	})
 
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return tokenString, nil
+	w.Header().Add("Authorization", "Bearer "+tokenString)
+
+	return nil
 }
 
-func verifyToken(tokenString string) error {
+func verifyToken(tokenString string) (*MyCustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if _, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
-		return nil
+	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
+		return claims, nil
 	}
 
-	return fmt.Errorf("Invalid token")
+	return nil, fmt.Errorf("Invalid token")
+}
+
+func authorize(w http.ResponseWriter, r *http.Request, attachNewToken bool) (*MyCustomClaims, error) {
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		return nil, errors.New("No access token")
+	}
+
+	claims, err := verifyToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	exp, err := claims.GetExpirationTime()
+	if err != nil {
+		return nil, err
+	}
+
+	// If exp less than 10 min away attach new token and update new refresh token
+	if attachNewToken {
+		if exp.Unix()-time.Now().Unix() < 10*60 {
+			err = attachToken(claims.ID, claims.Username, w)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return claims, nil
 }
 
 func verifyJson[T any](w http.ResponseWriter, r *http.Request) (*T, int, error) {
@@ -83,7 +116,7 @@ func verifyJson[T any](w http.ResponseWriter, r *http.Request) (*T, int, error) 
 			return nil, http.StatusBadRequest, errors.New(msg)
 		case strings.HasPrefix(err.Error(), "json: unknown field"):
 			fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
-			msg := fmt.Sprintf("Request body conatains unknown field %s", fieldName)
+			msg := fmt.Sprintf("Request body contains unknown field %s", fieldName)
 			return nil, http.StatusBadRequest, errors.New(msg)
 		case errors.Is(err, io.EOF):
 			msg := "Request body must not be empty"
