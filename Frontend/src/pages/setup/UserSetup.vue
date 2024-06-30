@@ -6,12 +6,14 @@ import router from "@/router.js";
 </script>
 
 <template>
-  <div style="margin-bottom: 150px">
-    <Back :navigate="() => router.push('/setup')" />
-    <h1 id="user-setup-text">User Setup</h1>
-    <p id="please-enter-text">Please enter these information so we could better improve your experience @ ConnectX!</p>
+  <div style="display: flex; align-items: center; justify-content: center; width: 100%">
+    <div style="margin-bottom: 150px">
+      <Back :navigate="() => router.push('/setup')" />
+      <h1 id="user-setup-text">User Setup</h1>
+      <p id="please-enter-text">Please enter these information so we could better improve your experience @ ConnectX!</p>
 
-    <UserSetupForm />
+      <UserSetupForm />
+    </div>
   </div>
 </template>
 

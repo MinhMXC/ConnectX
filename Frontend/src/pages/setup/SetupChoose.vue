@@ -7,21 +7,23 @@ import router from "@/router.js";
 </script>
 
 <template>
-  <div id="setup-container">
-    <p id="welcome-to-connectx-text">Welcome to ConnectX!</p>
-    <p id="please-tell-us-text">Please tell us what type of user you are!</p>
-    <div id="user-types-container">
-      <div class="user-type-item">
-        <img class="user-type-image" :src="studentImg" alt="student" />
-        <Button class="user-type-button" label="Student / Parent" @click="router.push('/setup/user')" />
-      </div>
-      <div class="user-type-item">
-        <img class="user-type-image" :src="teacherImg" alt="student" />
-        <Button class="user-type-button" label="Tutor" @click="router.push('/setup/tutor')" />
-      </div>
-      <div class="user-type-item">
-        <img class="user-type-image" :src="tuitionCenterImg" alt="student" />
-        <Button class="user-type-button" label="Tuition Center" @click="router.push('/setup/tuition_center')" />
+  <div style="display: flex; align-items: center; justify-content: center; width: 100%">
+    <div id="setup-container">
+      <p id="welcome-to-connectx-text">Welcome to ConnectX!</p>
+      <p id="please-tell-us-text">Please tell us what type of user you are!</p>
+      <div id="user-types-container">
+        <div class="user-type-item">
+          <img class="user-type-image" :src="studentImg" alt="student" />
+          <Button class="user-type-button" label="Student / Parent" @click="router.push('/setup/user')" />
+        </div>
+        <div class="user-type-item">
+          <img class="user-type-image" :src="teacherImg" alt="student" />
+          <Button class="user-type-button" label="Tutor" @click="router.push('/setup/tutor')" />
+        </div>
+        <div class="user-type-item">
+          <img class="user-type-image" :src="tuitionCenterImg" alt="student" />
+          <Button class="user-type-button" label="Tuition Center" @click="router.push('/setup/tuition_center')" />
+        </div>
       </div>
     </div>
   </div>

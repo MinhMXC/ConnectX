@@ -53,9 +53,9 @@
           </span>
           <div class="landingpage01-avatar">
             <img
-              src="/external/avatar1189-7174-200w.png"
-              alt="Avatar1189"
-              class="landingpage01-avatar1"
+                src="/external/avatar1189-7174-200w.png"
+                alt="Avatar1189"
+                class="landingpage01-avatar1"
             />
             <div class="landingpage01-frame2610301">
               <span class="landingpage01-text14 Smalltext">
@@ -73,9 +73,9 @@
           </span>
           <div class="landingpage01-avatar2">
             <img
-              src="/external/avatar1196-1uuf-200h.png"
-              alt="Avatar1196"
-              class="landingpage01-avatar3"
+                src="/external/avatar1196-1uuf-200h.png"
+                alt="Avatar1196"
+                class="landingpage01-avatar3"
             />
             <div class="landingpage01-frame26103011">
               <span class="landingpage01-text20 Smalltext">
@@ -93,9 +93,9 @@
           </span>
           <div class="landingpage01-avatar4">
             <img
-              src="/external/avatar1203-0ynt-200h.png"
-              alt="Avatar1203"
-              class="landingpage01-avatar5"
+                src="/external/avatar1203-0ynt-200h.png"
+                alt="Avatar1203"
+                class="landingpage01-avatar5"
             />
             <div class="landingpage01-frame26103012">
               <span class="landingpage01-text26 Smalltext">
@@ -119,27 +119,27 @@
           <button class="landingpage01-buttons-icon">
             <div class="landingpage01-icon">
               <img
-                src="/external/icon1235-3n7o.svg"
-                alt="Icon1235"
-                class="landingpage01-icon1"
+                  src="/external/icon1235-3n7o.svg"
+                  alt="Icon1235"
+                  class="landingpage01-icon1"
               />
             </div>
           </button>
           <button class="landingpage01-buttons-icon1">
             <div class="landingpage01-icon2">
               <img
-                src="/external/icon1240-nmc6.svg"
-                alt="Icon1240"
-                class="landingpage01-icon3"
+                  src="/external/icon1240-nmc6.svg"
+                  alt="Icon1240"
+                  class="landingpage01-icon3"
               />
             </div>
           </button>
           <button class="landingpage01-buttons-icon2">
             <div class="landingpage01-icon4">
               <img
-                src="/external/icon1250-7n2o.svg"
-                alt="Icon1250"
-                class="landingpage01-icon5"
+                  src="/external/icon1250-7n2o.svg"
+                  alt="Icon1250"
+                  class="landingpage01-icon5"
               />
             </div>
           </button>
@@ -150,8 +150,6 @@
 </template>
 
 <script>
-import button from "primevue/button";
-
 export default {
   name: 'LandingPage',
   data() {
@@ -169,10 +167,7 @@ export default {
 .landingpage01-container {
   width: 100%;
   display: flex;
-  overflow: auto;
-  min-height: 100vh;
-  align-items: center;
-  flex-direction: column;
+  justify-content: center;
   background-color: rgba(255, 255, 255, 1);
 }
 .landingpage01-landingpage01 {
@@ -181,12 +176,11 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: column;
+  box-sizing: border-box;
   background-color: rgba(255, 255, 255, 1);
 }
 .landingpage01-frame1321316142 {
   gap: 10px;
-  top: 237px;
-  left: 291px;
   width: 857px;
   display: flex;
   padding: 10px;
@@ -232,8 +226,6 @@ export default {
   line-height: 150%;
 }
 .landingpage01-image-dragintofill {
-  top: 607px;
-  left: 70px;
   width: 1280px;
   height: 640px;
   display: flex;
@@ -247,8 +239,6 @@ export default {
 }
 .landingpage01-heading {
   gap: 8px;
-  top: 1381px;
-  left: 80px;
   width: 733px;
   display: flex;
   align-self: flex-start;
@@ -272,8 +262,6 @@ export default {
 }
 .landingpage01-cards {
   gap: 32px;
-  top: 1509px;
-  left: 80px;
   width: 1280px;
   display: flex;
   align-items: flex-start;
@@ -435,13 +423,11 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 1);
-  margin-top: 300px;
+  margin-top: 20px;
   margin-bottom: 50px;
 }
 .landingpage01-items {
   gap: 48px;
-  top: 56px;
-  left: 880px;
   width: 480px;
   display: flex;
   align-items: center;
@@ -494,8 +480,6 @@ export default {
   text-decoration: none;
 }
 .landingpage01-navigation-footer {
-  top: 1852px;
-  left: -1px;
   width: 1440px;
   height: 239px;
   display: flex;
@@ -507,8 +491,6 @@ export default {
   margin-top: 100px;
 }
 .landingpage01-text40 {
-  top: 86px;
-  left: 664px;
   color: rgba(0, 0, 0, 1);
   height: auto;
   line-height: 150%;
@@ -516,8 +498,6 @@ export default {
 }
 .landingpage01-social-icons {
   gap: 8px;
-  top: 132px;
-  left: 652px;
   width: 136px;
   display: flex;
   align-items: flex-start;
@@ -533,8 +513,6 @@ export default {
   justify-content: center;
 }
 .landingpage01-icon {
-  top: 8px;
-  left: 8px;
   width: 24px;
   height: 24px;
   display: flex;
@@ -542,8 +520,6 @@ export default {
   flex-shrink: 0;
 }
 .landingpage01-icon1 {
-  top: 2.0399999618530273px;
-  left: 2px;
   width: 20px;
   height: 20px;
 }
@@ -559,8 +535,6 @@ export default {
   justify-content: center;
 }
 .landingpage01-icon2 {
-  top: 8px;
-  left: 8px;
   width: 24px;
   height: 24px;
   display: flex;
@@ -568,8 +542,6 @@ export default {
   flex-shrink: 0;
 }
 .landingpage01-icon3 {
-  top: 3px;
-  left: 3px;
   width: 18px;
   height: 18px;
 }
@@ -585,8 +557,6 @@ export default {
   justify-content: center;
 }
 .landingpage01-icon4 {
-  top: 8px;
-  left: 8px;
   width: 24px;
   height: 24px;
   display: flex;
@@ -594,14 +564,10 @@ export default {
   flex-shrink: 0;
 }
 .landingpage01-icon5 {
-  top: 2px;
-  left: 2px;
   width: 20px;
   height: 20px;
 }
 .landingpage01-divider {
-  top: 1px;
-  left: 80px;
   width: 1280px;
   height: 1px;
   align-self: stretch;

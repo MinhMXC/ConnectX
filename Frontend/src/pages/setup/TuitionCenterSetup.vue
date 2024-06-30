@@ -6,12 +6,14 @@ import TuitionCenterSetupForm from "@/components/form/tuition_center/TuitionCent
 </script>
 
 <template>
-  <div style="margin-bottom: 150px">
-    <Back :navigate="() => router.push('/setup')" />
-    <h1 id="user-setup-text">Tuition Center Setup</h1>
-    <p id="please-enter-text">Please enter these information so we could better improve your experience @ ConnectX!</p>
+  <div style="display: flex; align-items: center; justify-content: center; width: 100%">
+    <div style="margin-bottom: 150px">
+      <Back :navigate="() => router.push('/setup')" />
+      <h1 id="user-setup-text">Tuition Center Setup</h1>
+      <p id="please-enter-text">Please enter these information so we could better improve your experience @ ConnectX!</p>
 
-    <TuitionCenterSetupForm />
+      <TuitionCenterSetupForm />
+    </div>
   </div>
 </template>
 
