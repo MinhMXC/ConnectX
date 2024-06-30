@@ -423,7 +423,6 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 1);
-  margin-top: 20px;
   margin-bottom: 50px;
 }
 .landingpage01-items {

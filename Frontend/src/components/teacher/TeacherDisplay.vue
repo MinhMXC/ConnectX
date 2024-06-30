@@ -447,7 +447,7 @@ export default {
 }
 .examples-shop-examples-shop {
   width: 100%;
-  height: auto;
+  height: 100vh;
   display: flex;
   overflow: hidden;
   align-items: flex-start;

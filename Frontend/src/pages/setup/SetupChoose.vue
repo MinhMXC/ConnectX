@@ -4,10 +4,11 @@ import studentImg from '../../assets/student.png';
 import teacherImg from '../../assets/teacher.png';
 import tuitionCenterImg from '../../assets/tuition_center.png'
 import router from "@/router.js";
+import FullScreenCenteredContainer from "@/components/FullScreenCenteredContainer.vue";
 </script>
 
 <template>
-  <div style="display: flex; align-items: center; justify-content: center; width: 100%">
+  <FullScreenCenteredContainer>
     <div id="setup-container">
       <p id="welcome-to-connectx-text">Welcome to ConnectX!</p>
       <p id="please-tell-us-text">Please tell us what type of user you are!</p>
@@ -26,7 +27,7 @@ import router from "@/router.js";
         </div>
       </div>
     </div>
-  </div>
+  </FullScreenCenteredContainer>
 </template>
 
 <style scoped>

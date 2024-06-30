@@ -20,8 +20,7 @@ const props = defineProps(['navigate'])
 }
 
 #back-text {
-  margin-left: 10px;
+  margin-left: 20px;
   font-size: 35px;
-  margin-bottom: 4px;
 }
 </style>

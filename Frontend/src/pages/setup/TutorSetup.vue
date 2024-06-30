@@ -3,10 +3,11 @@ import 'primeicons/primeicons.css'
 import Back from "@/pages/Back.vue";
 import router from "@/router.js";
 import TutorSetupForm from "@/components/form/tutor/TutorSetupForm.vue";
+import FullScreenCenteredContainer from "@/components/FullScreenCenteredContainer.vue";
 </script>
 
 <template>
-  <div style="display: flex; align-items: center; justify-content: center; width: 100%">
+  <FullScreenCenteredContainer>
     <div style="margin-bottom: 150px">
       <Back :navigate="() => router.push('/setup')" />
       <h1 id="user-setup-text">Tutor Setup</h1>
@@ -14,7 +15,7 @@ import TutorSetupForm from "@/components/form/tutor/TutorSetupForm.vue";
 
       <TutorSetupForm />
     </div>
-  </div>
+  </FullScreenCenteredContainer>
 </template>
 
 <style scoped>
