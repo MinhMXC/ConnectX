@@ -12,7 +12,7 @@ export default function useBackendGet(url) {
         status.value = "";
         loading.value = true;
 
-        const res = await fetch("http://localhost:8080" + toValue(url), {
+        const res = await fetch(import.meta.env.VITE_BACKEND_URL + toValue(url), {
             method: "GET",
             cors: "cors",
             cache: "no-cache",

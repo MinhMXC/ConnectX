@@ -1,4 +1,5 @@
 .idea/
-Frontend-Minh/.idea/
-Frontend-Minh/.vscode/
-Frontend-Minh/node_modules/
+Frontend/.idea/
+Frontend/.vscode/
+Frontend/node_modules/
+Frontend/.env

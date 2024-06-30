@@ -11,7 +11,7 @@ export default function useBackendPost(url) {
         status.value = "";
         loading.value = true;
 
-        const res = await fetch("http://localhost:8080" + url, {
+        const res = await fetch(import.meta.env.VITE_BACKEND_URL + url, {
             method: "POST",
             cors: "cors",
             cache: "no-cache",
