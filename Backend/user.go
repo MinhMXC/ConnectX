@@ -10,25 +10,29 @@ import (
 
 type User struct {
 	ID        int    `json:"id"`
+	Email     string `json:"email"`
 	Username  string `json:"username"`
+	Picture   string `json:"picture"`
 	IsParent  bool   `json:"is_parent"`
 	Gender    bool   `json:"gender"`
 	CreatedAt int64  `json:"created_at"`
 }
 
 type UserCreate struct {
-	IsParent bool `json:"is_parent"`
-	Gender   bool `json:"gender"`
+	Username string `json:"username"`
+	Picture  string `json:"picture"`
+	IsParent bool   `json:"is_parent"`
+	Gender   bool   `json:"gender"`
 }
 
 func scanUserRows(item *User, rows *sql.Rows) error {
 	var temp string
-	return rows.Scan(&item.ID, &item.IsParent, &item.Gender, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return rows.Scan(&item.ID, &item.Username, &item.Picture, &item.IsParent, &item.Gender, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 func scanUserRow(item *User, row *sql.Row) error {
 	var temp string
-	return row.Scan(&item.ID, &item.IsParent, &item.Gender, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return row.Scan(&item.ID, &item.Username, &item.Picture, &item.IsParent, &item.Gender, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 func userSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
@@ -52,8 +56,8 @@ func userSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int
 		return http.StatusBadRequest, errors.New("You have already went through setup")
 	}
 
-	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO user (user_id, is_parent, gender) VALUES (%d, %t, %t)",
-		user.ID, data.IsParent, data.Gender))
+	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO user (user_id, username, picture, is_parent, gender) VALUES (%d, '%s', '%s', %t, %t)",
+		user.ID, data.Username, data.Picture, data.IsParent, data.Gender))
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return http.StatusBadRequest, errors.New("You have already went through setup")

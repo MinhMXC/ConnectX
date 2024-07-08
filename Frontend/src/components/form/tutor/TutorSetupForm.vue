@@ -11,6 +11,7 @@ import FormStatusText from "@/components/FormStatusText.vue";
 
 const name = ref("");
 const age = ref();
+const picture = ref("");
 const gender = ref("Male");
 const handphone = ref();
 const description = ref("");
@@ -22,8 +23,9 @@ const submitOnClick = async () => {
   await post({
     name: name.value,
     age: age.value,
+    picture: picture.value,
     gender: gender.value === "Others" ? null : gender.value === "Female",
-    handphone: handphone.value,
+    phone: String(handphone.value),
     description: description.value
   })
 
@@ -38,6 +40,7 @@ const submitOnClick = async () => {
   <div class="vertical-form-container">
     <CXInputText label="Name" v-model="name" />
     <CXInputNumber label="Age" v-model="age" />
+    <CXInputText label="Profile Pic" v-model="picture" />
     <CXSelect label="Gender" :options="genderOptions" v-model="gender" />
     <CXInputNumber label="Handphone" v-model="handphone" prefix="+65 " />
     <CXTextarea label="Description" v-model="description" :rows="10" placeholder="Tell users more about yourself" />

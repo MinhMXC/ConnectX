@@ -9,8 +9,9 @@ import (
 
 type TuitionCenter struct {
 	UserID      int    `json:"user_id"`
-	Username    string `json:"user_name"`
+	Email       string `json:"email"`
 	Name        string `json:"name"`
+	Picture     string `json:"picture"`
 	Phone       string `json:"phone"`
 	Address     string `json:"address"`
 	AddressLink string `json:"address_link"`
@@ -21,6 +22,7 @@ type TuitionCenter struct {
 
 type TuitionCenterCreate struct {
 	Name        string `json:"name"`
+	Picture     string `json:"picture"`
 	Phone       string `json:"phone"`
 	Address     string `json:"address"`
 	AddressLink string `json:"address_link"`
@@ -30,12 +32,12 @@ type TuitionCenterCreate struct {
 
 func scanTuitionCenterRows(item *TuitionCenter, rows *sql.Rows) error {
 	var temp string
-	return rows.Scan(&item.UserID, &item.Name, &item.Phone, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return rows.Scan(&item.UserID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 func scanTuitionCenterRow(item *TuitionCenter, row *sql.Row) error {
 	var temp string
-	return row.Scan(&item.UserID, &item.Name, &item.Phone, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return row.Scan(&item.UserID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 var getAllTuitionCenters = getAllItemsFactory[TuitionCenter]("tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id", scanTuitionCenterRows)
@@ -63,8 +65,8 @@ func tuitionCenterSetup(context *AppContext, w http.ResponseWriter, r *http.Requ
 		return http.StatusBadRequest, errors.New("You have already went through setup")
 	}
 
-	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO tuition_center (user_id, name, phone, address, address_link, description, website) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
-		user.ID, data.Name, data.Phone, data.Address, data.AddressLink, data.Description, data.Website))
+	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO tuition_center (user_id, name, picture, phone, address, address_link, description, website) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+		user.ID, data.Name, data.Picture, data.Phone, data.Address, data.AddressLink, data.Description, data.Website))
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

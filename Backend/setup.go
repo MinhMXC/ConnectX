@@ -84,7 +84,7 @@ func setup() {
 		`CREATE TABLE subject (
 			id SMALLINT NOT NULL AUTO_INCREMENT, 
 			name TINYTEXT NOT NULL, 
-			PRIMARY KEY (id), 
+			PRIMARY KEY (id),
 			level_id TINYINT,
 			CONSTRAINT fk_subject_level FOREIGN KEY (level_id) REFERENCES level(id)
 		)`)
@@ -103,6 +103,8 @@ func setup() {
 	exec(db, "Creating table 'user'",
 		`CREATE TABLE user(
     		user_id INT NOT NULL,
+    		username VARCHAR(64) NOT NULL,
+    		picture TINYTEXT,
     		is_parent BOOLEAN NOT NULL,
     		gender BOOLEAN,
     		PRIMARY KEY (user_id),
@@ -114,6 +116,7 @@ func setup() {
     		user_id INT NOT NULL,
     		name TINYTEXT NOT NULL,
     		age TINYINT NOT NULL,
+    		picture TINYTEXT,
     		gender BOOLEAN,
     		phone TINYTEXT NOT NULL,
     		description TEXT,
@@ -126,6 +129,7 @@ func setup() {
     		user_id iNT NOT NULL,
     		name TINYTEXT NOT NULL,
     		phone TINYTEXT NOT NULL,
+    		picture TINYTEXT,
     		address TEXT NOT NULL,
     		address_link TEXT NOT NULL,
     		description TEXT,
@@ -262,7 +266,7 @@ func setup() {
 		("Minh", "1234", 0, 1715872529), ("MinhTutor", "1234", 1, 1715872529), ("MinhTuitionCenter", "1234", 2, 1715872529)`)
 
 	exec(db, "Seeding table 'user'",
-		`INSERT INTO user (user_id, is_parent, gender) VALUES (1, false, false)`)
+		`INSERT INTO user (user_id, username, is_parent, gender) VALUES (1, 'minhmxc', false, false)`)
 
 	exec(db, "Seeding table 'tutor'",
 		`INSERT INTO tutor (user_id, name, age, phone, description, gender) VALUES

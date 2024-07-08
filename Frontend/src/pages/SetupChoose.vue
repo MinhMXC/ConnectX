@@ -1,8 +1,8 @@
 <script setup>
 import Button from 'primevue/button'
-import studentImg from '../../assets/student.png';
-import teacherImg from '../../assets/teacher.png';
-import tuitionCenterImg from '../../assets/tuition_center.png'
+import studentImg from '../assets/student.png';
+import teacherImg from '../assets/teacher.png';
+import tuitionCenterImg from '../assets/tuition_center.png'
 import router from "@/router.js";
 import FullScreenCenteredContainer from "@/components/FullScreenCenteredContainer.vue";
 </script>

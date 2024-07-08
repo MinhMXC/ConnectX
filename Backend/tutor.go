@@ -10,8 +10,9 @@ import (
 
 type Tutor struct {
 	UserID      int    `json:"user_id"`
-	Username    string `json:"username"`
+	Email       string `json:"email"`
 	Name        string `json:"name"`
+	Picture     string `json:"picture"`
 	Age         int    `json:"age"`
 	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
@@ -22,6 +23,7 @@ type Tutor struct {
 type TutorCreate struct {
 	Name        string `json:"name"`
 	Age         int    `json:"age"`
+	Picture     string `json:"picture"`
 	Gender      bool   `json:"gender"`
 	Phone       string `json:"phone"`
 	Description string `json:"description"`
@@ -29,12 +31,12 @@ type TutorCreate struct {
 
 func scanTutorRows(item *Tutor, rows *sql.Rows) error {
 	var temp string
-	return rows.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return rows.Scan(&item.UserID, &item.Name, &item.Age, &item.Picture, &item.Gender, &item.Phone, &item.Description, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 func scanTutorRow(item *Tutor, row *sql.Row) error {
 	var temp string
-	return row.Scan(&item.UserID, &item.Name, &item.Age, &item.Gender, &item.Phone, &item.Description, &temp, &item.Username, &temp, &temp, &item.CreatedAt)
+	return row.Scan(&item.UserID, &item.Name, &item.Age, &item.Picture, &item.Gender, &item.Phone, &item.Description, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 var getAllTutors = getAllItemsFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRows)
@@ -62,8 +64,8 @@ func tutorSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (in
 		return http.StatusBadRequest, errors.New("You have already went through setup")
 	}
 
-	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO tutor (user_id, name, age, gender, phone, description) VALUES (%d, '%s', %d, %t, '%s', '%s')",
-		user.ID, data.Name, data.Age, data.Gender, data.Phone, data.Description))
+	_, err = context.db.Exec(fmt.Sprintf("INSERT INTO tutor (user_id, name, age, picture, gender, phone, description) VALUES (%d, '%s', %d, '%s', %t, '%s', '%s')",
+		user.ID, data.Name, data.Age, data.Picture, data.Gender, data.Phone, data.Description))
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return http.StatusBadRequest, errors.New("You have already went through setup")

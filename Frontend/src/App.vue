@@ -10,4 +10,49 @@
   display: flex;
   justify-content: center;
 }
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.white-elevation {
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px;
+}
+
+.rounded {
+  border-radius: 10px;
+}
+
+.ctn-ctr-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ctn-ctr-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.ctn-ctr-col-no-align {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.not-found-text {
+  margin-top: 50px;
+  font-size: 40px;
+}
+
+.profile-ctn {
+  padding: 20px;
+  width: 80%;
+  min-width: 600px;
+  margin-top: 50px;
+}
 </style>

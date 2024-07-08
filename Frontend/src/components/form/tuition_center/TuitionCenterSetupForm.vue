@@ -9,6 +9,7 @@ import router from "@/router.js";
 import FormStatusText from "@/components/FormStatusText.vue";
 
 const name = ref("");
+const picture = ref("");
 const handphone = ref();
 const address = ref("");
 const addressLink = ref("");
@@ -20,7 +21,8 @@ const { post, status, loading } = useBackendPost("/tuition_center/setup");
 const submitOnclick = async () => {
   await post({
     name: name.value,
-    handphone: handphone.value,
+    picture: picture.value,
+    phone: String(handphone.value),
     address: address.value,
     address_link: addressLink.value,
     description: description.value,
@@ -37,6 +39,7 @@ const submitOnclick = async () => {
 <template>
   <div class="vertical-form-container">
     <CXInputText label="Name" v-model="name" />
+    <CXInputText label="Profile Pic" v-model="picture" />
     <CXInputNumber label="Handphone" v-model="handphone" prefix="+65 " />
     <CXInputText label="Address" v-model="address" />
     <CXInputText label="Address Link" v-model="addressLink" />
