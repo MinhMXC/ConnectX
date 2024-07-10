@@ -1,5 +1,5 @@
 <script setup>
-import Button from 'primevue/button'
+import Button from 'primevue/button';
 import {ref} from "vue";
 import useBackendPost from "@/composables/useBackendPost.js";
 import FormStatus from "@/components/FormStatusText.vue";

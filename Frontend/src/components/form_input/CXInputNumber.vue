@@ -1,8 +1,8 @@
 <script setup>
 import InputNumber from "primevue/inputnumber";
 
-const props = defineProps(['label', 'prefix', 'format'])
-const model = defineModel()
+const props = defineProps(['label', 'prefix', 'format']);
+const model = defineModel();
 </script>
 
 <template>

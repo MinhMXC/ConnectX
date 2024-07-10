@@ -8,7 +8,7 @@ import (
 )
 
 type TuitionCenter struct {
-	UserID      int    `json:"user_id"`
+	ID          int    `json:"id"`
 	Email       string `json:"email"`
 	Name        string `json:"name"`
 	Picture     string `json:"picture"`
@@ -32,12 +32,12 @@ type TuitionCenterCreate struct {
 
 func scanTuitionCenterRows(item *TuitionCenter, rows *sql.Rows) error {
 	var temp string
-	return rows.Scan(&item.UserID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
+	return rows.Scan(&item.ID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 func scanTuitionCenterRow(item *TuitionCenter, row *sql.Row) error {
 	var temp string
-	return row.Scan(&item.UserID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
+	return row.Scan(&item.ID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
 var getAllTuitionCenters = getAllItemsFactory[TuitionCenter]("tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id", scanTuitionCenterRows)
@@ -82,8 +82,8 @@ func tuitionCenterSetup(context *AppContext, w http.ResponseWriter, r *http.Requ
 var updateTuitionCenter = updateItemFactory[TuitionCenter, TuitionCenterCreate](
 	"tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id",
 	func(item *TuitionCenterCreate) string {
-		return fmt.Sprintf("UPDATE tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id SET name = '%s', phone = '%s', address = '%s', address_link = '%s', description = '%s', website = '%s'",
-			item.Name, item.Phone, item.Address, item.AddressLink, item.Description, item.Website)
+		return fmt.Sprintf("UPDATE tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id SET name = '%s', picture = '%s', phone = '%s', address = '%s', address_link = '%s', description = '%s', website = '%s'",
+			item.Name, item.Picture, item.Phone, item.Address, item.AddressLink, item.Description, item.Website)
 	},
 	scanTuitionCenterRow,
 )

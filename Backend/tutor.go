@@ -9,7 +9,7 @@ import (
 )
 
 type Tutor struct {
-	UserID      int    `json:"user_id"`
+	UserID      int    `json:"id"`
 	Email       string `json:"email"`
 	Name        string `json:"name"`
 	Picture     string `json:"picture"`
@@ -84,8 +84,8 @@ func tutorSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (in
 var updateTutor = updateItemFactory[Tutor, TutorCreate](
 	"tutor INNER JOIN base_user ON base_user.id = tutor.user_id",
 	func(item *TutorCreate) string {
-		return fmt.Sprintf("UPDATE tutor INNER JOIN base_user ON base_user.id = tutor.user_id SET name = '%s', age = %d, gender = %t, phone = '%s', description = '%s'",
-			item.Name, item.Age, item.Gender, item.Phone, item.Description)
+		return fmt.Sprintf("UPDATE tutor INNER JOIN base_user ON base_user.id = tutor.user_id SET name = '%s', age = %d, picture = '%s', gender = %t, phone = '%s', description = '%s'",
+			item.Name, item.Age, item.Picture, item.Gender, item.Phone, item.Description)
 	},
 	scanTutorRow,
 )

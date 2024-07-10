@@ -12,6 +12,9 @@ import TeacherDisplay from "@/components/teacher/TeacherDisplay.vue";
 import UserProfile from "@/pages/user/UserProfile.vue";
 import TutorProfile from "@/pages/tutor/TutorProfile.vue";
 import TuitionCenterProfile from "@/pages/tuition_center/TuitionCenterProfile.vue";
+import UserEdit from "@/pages/user/UserEdit.vue";
+import TutorEdit from "@/pages/tutor/TutorEdit.vue";
+import TuitionCenterEdit from "@/pages/tuition_center/TuitionCenterEdit.vue";
 
 const routes = [
     { path: '/auth/login', component: Login },
@@ -25,13 +28,18 @@ const routes = [
     { path: '/teacher', component: TeacherDisplay },
 
     { path: '/user/:id', component: UserProfile },
+    { path: '/user/:id/edit', component: UserEdit },
+
     { path: '/tutor/:id', component: TutorProfile },
+    { path: '/tutor/:id/edit', component: TutorEdit },
+
     { path: '/tuition_center/:id', component: TuitionCenterProfile },
-]
+    { path: '/tuition_center/:id/edit', component: TuitionCenterEdit },
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-})
+});
 
 export default router;

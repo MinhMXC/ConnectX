@@ -1,5 +1,5 @@
 <script setup>
-import 'primeicons/primeicons.css'
+import 'primeicons/primeicons.css';
 import Back from "@/pages/Back.vue";
 import UserSetupForm from "@/components/form/user/UserSetupForm.vue";
 import router from "@/router.js";

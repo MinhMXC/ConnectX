@@ -80,8 +80,8 @@ var getUserByID = getItemByIDFactory[User]("user INNER JOIN base_user ON base_us
 var updateUser = updateItemFactory[User, UserCreate](
 	"user INNER JOIN base_user ON base_user.id = user.user_id",
 	func(item *UserCreate) string {
-		return fmt.Sprintf("UPDATE user INNER JOIN base_user ON base_user.id = user.user_id SET is_parent = %t, gender = %t",
-			item.IsParent, item.Gender)
+		return fmt.Sprintf("UPDATE user INNER JOIN base_user ON base_user.id = user.user_id SET username = '%s', picture = '%s', is_parent = %t, gender = %t",
+			item.Username, item.Picture, item.IsParent, item.Gender)
 	},
 	scanUserRow,
 )

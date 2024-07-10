@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref, watch} from "vue";
 import CXInputText from "@/components/form_input/CXInputText.vue";
 import CXInputNumber from "@/components/form_input/CXInputNumber.vue";
 import CXTextarea from "@/components/form_input/CXTextarea.vue";
@@ -7,32 +7,68 @@ import Button from "primevue/button";
 import useBackendPost from "@/composables/useBackendPost.js";
 import router from "@/router.js";
 import FormStatusText from "@/components/FormStatusText.vue";
+import useBackendPatch from "@/composables/useBackendPatch.js";
 
+const props = defineProps(['data']);
+const data = computed(() => props.data);
 const name = ref("");
 const picture = ref("");
-const handphone = ref();
+const phone = ref();
 const address = ref("");
 const addressLink = ref("");
 const description = ref("");
 const website = ref("");
 
-const { post, status, loading } = useBackendPost("/tuition_center/setup");
+watch(data, (newValue) => {
+  name.value = newValue.name;
+  picture.value = newValue.picture;
+  phone.value = newValue.phone;
+  address.value = newValue.address;
+  addressLink.value = newValue.address_link;
+  description.value = newValue.description;
+  website.value = newValue.website;
+});
+
+const postObject = useBackendPost("/tuition_center/setup");
+const putObject = computed(() => useBackendPatch(`/tuition_center/${props.data?.id}`));
+
+const post = postObject.post;
+const put = computed(() => putObject.value.put);
+
+const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
+const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);
 
 const submitOnclick = async () => {
-  await post({
-    name: name.value,
-    picture: picture.value,
-    phone: String(handphone.value),
-    address: address.value,
-    address_link: addressLink.value,
-    description: description.value,
-    website: website.value
-  })
+  if (props.data) {
+    await put.value({
+      name: name.value,
+      picture: picture.value,
+      phone: String(phone.value),
+      address: address.value,
+      address_link: addressLink.value,
+      description: description.value,
+      website: website.value
+    });
 
-  if (status === "Success") {
-    await router.push("/temp");
+    if (status.value === "Success") {
+      await router.push(`/tuition_center/${props.data?.id}`);
+    }
+  } else {
+    await post({
+      name: name.value,
+      picture: picture.value,
+      phone: String(phone.value),
+      address: address.value,
+      address_link: addressLink.value,
+      description: description.value,
+      website: website.value
+    });
+
+    if (status.value === "Success") {
+      await router.push("/");
+    }
   }
-}
+};
 
 </script>
 
@@ -40,7 +76,7 @@ const submitOnclick = async () => {
   <div class="vertical-form-container">
     <CXInputText label="Name" v-model="name" />
     <CXInputText label="Profile Pic" v-model="picture" />
-    <CXInputNumber label="Handphone" v-model="handphone" prefix="+65 " />
+    <CXInputNumber label="Handphone" v-model="phone" prefix="+65 " />
     <CXInputText label="Address" v-model="address" />
     <CXInputText label="Address Link" v-model="addressLink" />
     <CXTextarea label="Website" v-model="website" :rows="1" placeholder="So users can find out more about you" />

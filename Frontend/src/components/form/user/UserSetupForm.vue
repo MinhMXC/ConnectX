@@ -1,33 +1,63 @@
 <script setup>
 import Checkbox from "primevue/checkbox";
-import {ref} from "vue";
+import {computed, ref, watch} from "vue";
 import Button from "primevue/button";
 import CXSelect from "@/components/form_input/CXSelect.vue";
 import useBackendPost from "@/composables/useBackendPost.js";
 import FormStatusText from "@/components/FormStatusText.vue";
 import router from "@/router.js";
 import CXInputText from "@/components/form_input/CXInputText.vue";
+import useBackendPatch from "@/composables/useBackendPatch.js";
 
+const props = defineProps(['data']);
+const data = computed(() => props.data);
 const username = ref("");
 const picture = ref("");
 const gender = ref("Male");
 const isParent = ref(false);
-const genderOptions = [ "Male", "Female", "Others" ]
+const genderOptions = [ "Male", "Female", "Others" ];
 
-const { post, status, loading } = useBackendPost("/user/setup");
+watch(data, (newValue) => {
+  username.value = newValue.username;
+  picture.value = newValue.picture;
+  gender.value = newValue.gender === null ? "Others" : newValue.gender ? "Female" : "Male";
+  isParent.value = newValue.is_parent;
+});
+
+const postObject = useBackendPost("/user/setup");
+const putObject = computed(() => useBackendPatch(`/user/${props.data?.id}`));
+
+const post = postObject.post;
+const put = computed(() => putObject.value.put);
+
+const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
+const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);
 
 const submitOnClick = async () => {
-  await post({
-    username: username.value,
-    picture: picture.value,
-    gender: gender.value === "Others" ? null : gender.value === "Female",
-    is_parent: isParent.value
-  });
+  if (props.data) {
+    await put.value({
+      username: username.value,
+      picture: picture.value,
+      gender: gender.value === "Others" ? null : gender.value === "Female",
+      is_parent: isParent.value
+    });
 
-  if (status === "Success") {
-    await router.push("/temp");
+    if (status.value === "Success") {
+      await router.push(`/user/${props.data?.id}`);
+    }
+  } else {
+    await post({
+      username: username.value,
+      picture: picture.value,
+      gender: gender.value === "Others" ? null : gender.value === "Female",
+      is_parent: isParent.value
+    });
+
+    if (status.value === "Success") {
+      await router.push("/");
+    }
   }
-}
+};
 </script>
 
 <template>

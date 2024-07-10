@@ -1,5 +1,5 @@
 <script setup>
-import Button from 'primevue/button'
+import Button from 'primevue/button';
 import {ref} from "vue";
 import FormStatusText from "@/components/FormStatusText.vue";
 import useBackendPost from "@/composables/useBackendPost.js";
@@ -10,7 +10,7 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 
-const { post, data, status, loading } = useBackendPost("/user")
+const { post, status, loading } = useBackendPost("/user");
 
 const signupOnClick = async () => {
   await post({ email: email.value, password: password.value, confirm_password: confirmPassword.value });
@@ -19,7 +19,7 @@ const signupOnClick = async () => {
     password.value = "";
     confirmPassword.value = "";
   }
-}
+};
 </script>
 
 <template>
