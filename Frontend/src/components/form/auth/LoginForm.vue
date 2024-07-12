@@ -18,10 +18,10 @@ const loginOnClick = async () => {
     if (data.value.user_type === -1) {
       await router.push("/setup");
     } else {
-      await router.push("/temp");
+      await router.push("/");
     }
   }
-}
+};
 
 </script>
 

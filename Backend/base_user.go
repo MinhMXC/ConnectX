@@ -34,7 +34,8 @@ type Login struct {
 }
 
 type BaseUserUpdate struct {
-	Password string `json:"password"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 func generateRandomString(length int) (string, error) {
@@ -45,6 +46,39 @@ func generateRandomString(length int) (string, error) {
 	}
 
 	return base64.URLEncoding.EncodeToString(b), nil
+}
+
+func verifyPassword(password string, confirmPassword string) error {
+	if password != confirmPassword {
+		return errors.New("Password and Confirm Password does not match")
+	}
+
+	if len(password) < 8 {
+		return errors.New("Password must be at least 8 characters")
+	}
+	var uppercaseCount int
+	var lowercaseCount int
+	var numberCount int
+	for _, char := range password {
+		if 65 <= char && char <= 90 {
+			uppercaseCount++
+		} else if 97 <= char && char <= 122 {
+			lowercaseCount++
+		} else if 48 <= char && char <= 57 {
+			numberCount++
+		}
+	}
+	if uppercaseCount == 0 {
+		return errors.New("Password must contains at least one uppercase letter")
+	}
+	if lowercaseCount == 0 {
+		return errors.New("Password must contains at least one lowercase letter")
+	}
+	if numberCount == 0 {
+		return errors.New("Password must contains at least a number")
+	}
+
+	return nil
 }
 
 func signupHandler(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
@@ -58,35 +92,9 @@ func signupHandler(context *AppContext, w http.ResponseWriter, r *http.Request) 
 		return http.StatusBadRequest, errors.New("Invalid email address")
 	}
 
-	// Password checking
-	// Password must be at least 8 character & contains uppercase, lowercase and number
-	if credential.Password != credential.ConfirmPassword {
-		return http.StatusBadRequest, errors.New("Password and Confirm Password does not match")
-	}
-
-	if len(credential.Password) < 8 {
-		return http.StatusBadRequest, errors.New("Password must be at least 8 characters")
-	}
-	var uppercaseCount int
-	var lowercaseCount int
-	var numberCount int
-	for _, char := range credential.Password {
-		if 65 <= char && char <= 90 {
-			uppercaseCount++
-		} else if 97 <= char && char <= 122 {
-			lowercaseCount++
-		} else if 48 <= char && char <= 57 {
-			numberCount++
-		}
-	}
-	if uppercaseCount == 0 {
-		return http.StatusBadRequest, errors.New("Password must contains at least one uppercase letter")
-	}
-	if lowercaseCount == 0 {
-		return http.StatusBadRequest, errors.New("Password must contains at least one lowercase letter")
-	}
-	if numberCount == 0 {
-		return http.StatusBadRequest, errors.New("Password must contains at least a number")
+	err = verifyPassword(credential.Password, credential.ConfirmPassword)
+	if err != nil {
+		return http.StatusBadRequest, err
 	}
 
 	sum := sha256.Sum256([]byte(credential.Password))
@@ -153,6 +161,11 @@ func changePasswordHandler(context *AppContext, w http.ResponseWriter, r *http.R
 	data, status, err := verifyJson[BaseUserUpdate](w, r)
 	if status != 200 {
 		return status, err
+	}
+
+	err = verifyPassword(data.Password, data.ConfirmPassword)
+	if err != nil {
+		return http.StatusBadRequest, err
 	}
 
 	// Change the password hash

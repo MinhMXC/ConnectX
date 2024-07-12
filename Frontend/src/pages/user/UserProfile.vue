@@ -3,10 +3,12 @@ import Button from 'primevue/button';
 import Image from 'primevue/image';
 import useBackendGet from "@/composables/useBackendGet.js";
 import {useRoute, useRouter} from "vue-router";
+import useLogout from "@/composables/useLogout.js";
 
 const route = useRoute();
 const router = useRouter();
 const { data, status } = useBackendGet(`/user/${route.params.id}`);
+const { logout } = useLogout();
 
 const editProfileOnClick = () => {
   router.push(`/user/${route.params.id}/edit`);
@@ -26,8 +28,10 @@ const editProfileOnClick = () => {
       </div>
     </div>
 
-    <div style="margin-top: 20px; display: flex; flex-direction: column">
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px">
       <Button @click="editProfileOnClick">Edit Profile</Button>
+      <Button @click="router.push('/auth/change_password')">Change Password</Button>
+      <Button @click="logout">Logout</Button>
     </div>
   </div>
 </template>

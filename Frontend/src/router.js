@@ -15,14 +15,18 @@ import TuitionCenterProfile from "@/pages/tuition_center/TuitionCenterProfile.vu
 import UserEdit from "@/pages/user/UserEdit.vue";
 import TutorEdit from "@/pages/tutor/TutorEdit.vue";
 import TuitionCenterEdit from "@/pages/tuition_center/TuitionCenterEdit.vue";
+import ChangePassword from "@/pages/auth/ChangePassword.vue";
 
 const routes = [
     { path: '/auth/login', component: Login },
     { path: '/auth/signup', component: SignUp },
+    { path: '/auth/change_password', component: ChangePassword },
+
     { path: '/setup', component: SetupChoose },
     { path: '/setup/user', component: UserSetup },
     { path: '/setup/tutor', component: TutorSetup },
     { path: '/setup/tuition_center', component: TuitionCenterSetup },
+
     { path: '/temp', component: NotImplemented },
     { path: '/', component: LandingPage },
     { path: '/teacher', component: TeacherDisplay },

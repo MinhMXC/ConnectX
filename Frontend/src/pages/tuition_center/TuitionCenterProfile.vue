@@ -5,8 +5,10 @@ import useBackendGet from "@/composables/useBackendGet.js";
 import {useRoute} from "vue-router";
 import Button from "primevue/button";
 import router from "@/router.js";
+import useLogout from "@/composables/useLogout.js";
 
 const route = useRoute();
+const { logout } = useLogout();
 const { data, status } = useBackendGet(`/tuition_center/${route.params.id}`);
 
 const editProfileOnClick = () => {
@@ -32,8 +34,10 @@ const editProfileOnClick = () => {
       </div>
     </div>
 
-    <div style="margin-top: 20px; display: flex; flex-direction: column">
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px">
       <Button @click="editProfileOnClick">Edit Profile</Button>
+      <Button @click="router.push('/auth/change_password')">Change Password</Button>
+      <Button @click="logout">Logout</Button>
     </div>
   </div>
 </template>

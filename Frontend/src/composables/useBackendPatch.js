@@ -6,7 +6,7 @@ export default function useBackendPatch(url) {
     const loading = ref(false);
     const $cookies = inject("$cookies");
 
-    const put = async (putData) => {
+    const patch = async (putData) => {
         data.value = null;
         status.value = "";
         loading.value = true;
@@ -44,5 +44,5 @@ export default function useBackendPatch(url) {
         loading.value = false;
     };
 
-    return { put, data, status, loading };
+    return { patch, data, status, loading };
 }

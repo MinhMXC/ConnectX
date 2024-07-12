@@ -1,13 +1,15 @@
 import {inject, ref, toValue, watchEffect} from 'vue';
 
 // url must be a ref
-export default function useBackendGet(url) {
+export default function useBackendGet(url, autoRun = true) {
+    const first = ref(false);
     const data = ref(null);
     const status = ref("");
     const loading = ref(false);
     const $cookies = inject("$cookies");
 
     const get = async () => {
+        first.value = true;
         data.value = null;
         status.value = "";
         loading.value = true;
@@ -41,11 +43,14 @@ export default function useBackendGet(url) {
         }
         status.value = "Success";
         loading.value = false;
-    }
+    };
 
     watchEffect(() => {
+        if (autoRun === false && first.value === false) {
+            return;
+        }
         get();
-    })
+    });
 
     return { get, data, status, loading };
 }

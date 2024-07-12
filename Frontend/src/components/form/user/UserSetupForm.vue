@@ -28,7 +28,7 @@ const postObject = useBackendPost("/user/setup");
 const putObject = computed(() => useBackendPatch(`/user/${props.data?.id}`));
 
 const post = postObject.post;
-const put = computed(() => putObject.value.put);
+const put = computed(() => putObject.value.patch);
 
 const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
 const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);

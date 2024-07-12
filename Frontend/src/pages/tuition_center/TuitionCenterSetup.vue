@@ -1,5 +1,5 @@
 <script setup>
-import 'primeicons/primeicons.css'
+import 'primeicons/primeicons.css';
 import Back from "@/pages/Back.vue";
 import router from "@/router.js";
 import TuitionCenterSetupForm from "@/components/form/tuition_center/TuitionCenterSetupForm.vue";
