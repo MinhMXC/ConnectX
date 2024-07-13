@@ -17,14 +17,9 @@ const loginOnClick = async () => {
 
   if (status.value === "Success") {
     $cookies.set("email", data.value.email);
+    $cookies.set("user_type", data.value.user_type);
+    $cookies.set("user_id", data.value.id);
 
-    const user_type = data.value.user_type === 1
-        ? "User"
-        : data.value.user_type === 2
-        ? "Tutor"
-            : "Tuition Center";
-
-    $cookies.set("user_type", user_type);
     if (data.value.user_type === -1) {
       await router.push("/setup");
     } else {
