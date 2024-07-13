@@ -10,6 +10,8 @@ export default function useLogout() {
         await get();
         $cookies.remove("Authorization");
         $cookies.remove("Refresh-Token");
+        $cookies.remove("email");
+        $cookies.remove("user_type");
         await router.push("/auth/login");
     };
 

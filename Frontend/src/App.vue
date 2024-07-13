@@ -1,14 +1,20 @@
 <script setup>
+import AppBar from "@/components/AppBar.vue";
 </script>
 
 <template>
+  <AppBar :key="$route.fullPath" />
   <RouterView :key="$route.fullPath" />
 </template>
 
 <style>
 #app {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 p {
@@ -54,5 +60,12 @@ p {
   width: 80%;
   min-width: 600px;
   margin-top: 50px;
+}
+
+.profile-button-ctn {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>

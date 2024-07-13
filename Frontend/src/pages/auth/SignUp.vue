@@ -20,7 +20,7 @@ import SignUpForm from "@/components/form/auth/SignUpForm.vue";
 <style scoped>
 #signup-page-container {
   display: flex;
-  height: 100vh;
+  flex-grow: 1;
   width: 100vw;
   padding: 20px;
   box-sizing: border-box;

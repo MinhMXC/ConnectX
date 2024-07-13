@@ -19,7 +19,6 @@ const textArray = [' students', ' tutors', ' tuition centers', ' learning'];
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 100%;
   width: 35%;
   padding: 20px;
   border-radius: 5px;

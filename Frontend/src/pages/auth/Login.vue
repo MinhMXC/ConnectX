@@ -24,7 +24,7 @@ import LoginForm from "@/components/form/auth/LoginForm.vue";
 <style scoped>
 #login-page-container {
   display: flex;
-  height: 100vh;
+  flex-grow: 1;
   width: 100vw;
   padding: 20px;
   box-sizing: border-box;

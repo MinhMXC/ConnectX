@@ -4,11 +4,13 @@ import Image from 'primevue/image';
 import useBackendGet from "@/composables/useBackendGet.js";
 import {useRoute, useRouter} from "vue-router";
 import useLogout from "@/composables/useLogout.js";
+import {inject} from "vue";
 
 const route = useRoute();
 const router = useRouter();
 const { data, status } = useBackendGet(`/user/${route.params.id}`);
 const { logout } = useLogout();
+const $cookies = inject("$cookies");
 
 const editProfileOnClick = () => {
   router.push(`/user/${route.params.id}/edit`);
@@ -28,7 +30,7 @@ const editProfileOnClick = () => {
       </div>
     </div>
 
-    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px">
+    <div v-if="$cookies.get('email') === data.email" class="profile-button-ctn">
       <Button @click="editProfileOnClick">Edit Profile</Button>
       <Button @click="router.push('/auth/change_password')">Change Password</Button>
       <Button @click="logout">Logout</Button>
@@ -41,6 +43,7 @@ const editProfileOnClick = () => {
   font-size: 40px;
   font-weight: 600;
 }
+
 
 .other-info {
   font-size: 25px;

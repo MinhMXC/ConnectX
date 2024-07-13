@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button';
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import useBackendPost from "@/composables/useBackendPost.js";
 import FormStatus from "@/components/FormStatusText.vue";
 import router from "@/router.js";
@@ -9,12 +9,22 @@ import CXPassword from "@/components/form_input/CXPassword.vue";
 
 const email = ref("");
 const password = ref("");
+const $cookies = inject("$cookies");
 const { post, data, status, loading } = useBackendPost("/user/login");
 
 const loginOnClick = async () => {
   await post({ email: email.value, password: password.value });
 
   if (status.value === "Success") {
+    $cookies.set("email", data.value.email);
+
+    const user_type = data.value.user_type === 1
+        ? "User"
+        : data.value.user_type === 2
+        ? "Tutor"
+            : "Tuition Center";
+
+    $cookies.set("user_type", user_type);
     if (data.value.user_type === -1) {
       await router.push("/setup");
     } else {

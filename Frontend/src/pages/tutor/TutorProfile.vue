@@ -6,10 +6,12 @@ import {useRoute} from "vue-router";
 import Button from "primevue/button";
 import router from "@/router.js";
 import useLogout from "@/composables/useLogout.js";
+import {inject} from "vue";
 
 const route = useRoute();
 const { logout } = useLogout();
 const { data, status } = useBackendGet(`/tutor/${route.params.id}`);
+const $cookies = inject("$cookies");
 
 const editProfileOnClick = () => {
   router.push(`/tutor/${route.params.id}/edit`);
@@ -32,7 +34,7 @@ const editProfileOnClick = () => {
       </div>
     </div>
 
-    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px">
+    <div v-if="$cookies.get('email') === data.email" class="profile-button-ctn">
       <Button @click="editProfileOnClick">Edit Profile</Button>
       <Button @click="router.push('/auth/change_password')">Change Password</Button>
       <Button @click="logout">Logout</Button>
