@@ -39,7 +39,11 @@ func scanTutorRow(item *Tutor, row *sql.Row) error {
 	return row.Scan(&item.UserID, &item.Name, &item.Age, &item.Picture, &item.Gender, &item.Phone, &item.Description, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
-var getAllTutors = getAllItemsFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRows)
+var getAllTutors = getAllItemsFactory[Tutor](
+	"tutor INNER JOIN base_user ON base_user.id = tutor.user_id",
+	noFilter,
+	scanTutorRows,
+)
 
 var getTutorByID = getItemByIDFactory[Tutor]("tutor INNER JOIN base_user ON base_user.id = tutor.user_id", scanTutorRow)
 

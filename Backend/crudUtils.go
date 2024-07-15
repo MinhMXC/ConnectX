@@ -10,6 +10,10 @@ import (
 	"regexp"
 )
 
+func noFilter(r *http.Request) string {
+	return "id IS NOT NULL"
+}
+
 // A factory method for getting all rows in a table.
 //
 // tableName: name of the table in database.
@@ -17,9 +21,13 @@ import (
 // scanFn: scan the row into the provided item.
 //
 // Return an HTTP handler
-func getAllItemsFactory[T any](tableName string, scanFn func(item *T, rows *sql.Rows) error) func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
+func getAllItemsFactory[T any](
+	tableName string,
+	filter func(r *http.Request) string,
+	scanFn func(item *T, rows *sql.Rows) error,
+) func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
 	getAll := func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
-		rows, err := context.db.Query(fmt.Sprintf("SELECT * FROM %s", tableName))
+		rows, err := context.db.Query(fmt.Sprintf("SELECT * FROM %s WHERE %s", tableName, filter(r)))
 		if err != nil {
 			return http.StatusInternalServerError, err
 		}
@@ -194,7 +202,7 @@ func updateItemFactory[T any, U any](
 //
 // tableName: name of the table in database.
 //
-// Return a HTTP handler
+// Return an HTTP handler
 func deleteItemByIDFactory(tableName string) func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
 	deleteItemByID := func(context *AppContext, w http.ResponseWriter, r *http.Request) (int, error) {
 		_, err := context.db.Exec(fmt.Sprintf("DELETE FROM %s WHERE id = %s", tableName, r.PathValue("id")))

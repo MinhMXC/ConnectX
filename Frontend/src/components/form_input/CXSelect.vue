@@ -1,8 +1,8 @@
 <script setup>
 import Select from "primevue/select";
 
-const props = defineProps(['label', 'options'])
-const model = defineModel()
+const props = defineProps(['label', 'options']);
+const model = defineModel();
 </script>
 
 <template>

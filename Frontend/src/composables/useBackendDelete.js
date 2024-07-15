@@ -1,25 +1,24 @@
-import {inject, ref} from 'vue';
+import {inject, ref, toValue} from 'vue';
 
-export default function useBackendPatch(url) {
+// url must be a ref
+export default function useBackendDelete(url) {
     const data = ref(null);
     const status = ref("");
     const loading = ref(false);
     const $cookies = inject("$cookies");
 
-    const patch = async (patchData) => {
+    const deleteFn = async () => {
         data.value = null;
         status.value = "";
         loading.value = true;
 
-        const res = await fetch(import.meta.env.VITE_BACKEND_URL + url, {
-            method: "PATCH",
+        const res = await fetch(import.meta.env.VITE_BACKEND_URL + toValue(url), {
+            method: "DELETE",
             cors: "cors",
             cache: "no-cache",
             headers: {
-                "Content-Type": "application/json",
                 "Authorization": $cookies.get("Authorization")
-            },
-            body: JSON.stringify(patchData)
+            }
         });
 
         if (res.status >= 400) {
@@ -44,5 +43,5 @@ export default function useBackendPatch(url) {
         loading.value = false;
     };
 
-    return { patch, data, status, loading };
+    return { deleteFn, data, status, loading };
 }

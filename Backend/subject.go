@@ -16,9 +16,13 @@ type SubjectCreate struct {
 	LevelID int    `json:"level_id"`
 }
 
-var getAllSubjects = getAllItemsFactory[Subject]("subject", func(item *Subject, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Name, &item.LevelID)
-})
+var getAllSubjects = getAllItemsFactory[Subject](
+	"subject",
+	noFilter,
+	func(item *Subject, rows *sql.Rows) error {
+		return rows.Scan(&item.ID, &item.Name, &item.LevelID)
+	},
+)
 
 var getSubjectByID = getItemByIDFactory[Subject]("subject", func(item *Subject, row *sql.Row) error {
 	return row.Scan(&item.ID, &item.Name, &item.LevelID)

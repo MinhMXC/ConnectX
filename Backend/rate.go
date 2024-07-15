@@ -22,9 +22,13 @@ type RateCreate struct {
 	TuitionCenterID *int    `json:"tuition_center_id"`
 }
 
-var getAllRates = getAllItemsFactory[Rate]("rate", func(item *Rate, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
-})
+var getAllRates = getAllItemsFactory[Rate](
+	"rate",
+	noFilter,
+	func(item *Rate, rows *sql.Rows) error {
+		return rows.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
+	},
+)
 
 var getRateByID = getItemByIDFactory[Rate]("rate", func(item *Rate, row *sql.Row) error {
 	return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)

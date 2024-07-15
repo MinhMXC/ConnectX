@@ -13,7 +13,7 @@ const { data } = useBackendGet(`/tutor/${route.params.id}`);
 <template>
   <FullScreenCenteredContainer>
     <div style="margin-bottom: 150px; min-width: 600px">
-      <Back :navigate="() => $router.push(`/user/${route.params.id}`)" />
+      <Back :navigate="() => $router.push(`/tutor/${route.params.id}`)" />
       <h1 id="tutor-setup-text">Editing Tutor Profile</h1>
 
       <TutorSetupForm :data="data" />

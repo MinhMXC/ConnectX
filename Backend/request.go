@@ -24,9 +24,13 @@ type RequestCreate struct {
 	LevelID     int     `json:"level_id"`
 }
 
-var getAllRequests = getAllItemsFactory[Request]("request", func(item *Request, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Description, &item.Rate, &item.CreatedAt, &item.UserID, &item.SubjectID, &item.LevelID)
-})
+var getAllRequests = getAllItemsFactory[Request](
+	"request",
+	noFilter,
+	func(item *Request, rows *sql.Rows) error {
+		return rows.Scan(&item.ID, &item.Description, &item.Rate, &item.CreatedAt, &item.UserID, &item.SubjectID, &item.LevelID)
+	},
+)
 
 var getRequestByID = getItemByIDFactory[Request]("request", func(item *Request, row *sql.Row) error {
 	return row.Scan(&item.ID, &item.Description, &item.Rate, &item.CreatedAt, &item.UserID, &item.SubjectID, &item.LevelID)

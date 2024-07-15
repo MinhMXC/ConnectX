@@ -30,17 +30,17 @@ watch(data, (newValue) => {
 });
 
 const postObject = useBackendPost("/tuition_center/setup");
-const putObject = computed(() => useBackendPatch(`/tuition_center/${props.data?.id}`));
+const patchObject = computed(() => useBackendPatch(`/tuition_center/${props.data?.id}`));
 
 const post = postObject.post;
-const put = computed(() => putObject.value.patch);
+const patch = computed(() => patchObject.value.patch);
 
-const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
-const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);
+const status = computed(() => props.data ? patchObject.value.status.value : postObject.status.value);
+const loading = computed(() => props.data ? patchObject.value.loading.value : postObject.loading.value);
 
 const submitOnclick = async () => {
   if (props.data) {
-    await put.value({
+    await patch.value({
       name: name.value,
       picture: picture.value,
       phone: String(phone.value),
@@ -91,9 +91,5 @@ const submitOnclick = async () => {
 </template>
 
 <style scoped>
-.vertical-form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+
 </style>

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<div style="display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh">
+<div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; width: 100vw;">
   <slot></slot>
 </div>
 </template>

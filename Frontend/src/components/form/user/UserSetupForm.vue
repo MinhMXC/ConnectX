@@ -25,17 +25,17 @@ watch(data, (newValue) => {
 });
 
 const postObject = useBackendPost("/user/setup");
-const putObject = computed(() => useBackendPatch(`/user/${props.data?.id}`));
+const patchObject = computed(() => useBackendPatch(`/user/${props.data?.id}`));
 
 const post = postObject.post;
-const put = computed(() => putObject.value.patch);
+const patch = computed(() => patchObject.value.patch);
 
-const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
-const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);
+const status = computed(() => props.data ? patchObject.value.status.value : postObject.status.value);
+const loading = computed(() => props.data ? patchObject.value.loading.value : postObject.loading.value);
 
 const submitOnClick = async () => {
   if (props.data) {
-    await put.value({
+    await patch.value({
       username: username.value,
       picture: picture.value,
       gender: gender.value === "Others" ? null : gender.value === "Female",
@@ -61,7 +61,7 @@ const submitOnClick = async () => {
 </script>
 
 <template>
-  <div class="ctn-ctr-col-no-align" style="gap: 10px">
+  <div class="vertical-form-container">
     <CXInputText label="Username" v-model="username" />
     <CXInputText label="Profile Pic" v-model="picture" />
     <CXSelect label="Gender" :options="genderOptions" v-model="gender" />

@@ -30,17 +30,17 @@ watch(data, (newValue) => {
 
 const genderOptions = [ "Male", "Female", "Others" ];
 const postObject = useBackendPost("/tutor/setup");
-const putObject = computed(() => useBackendPatch(`/tutor/${props.data?.id}`));
+const patchObject = computed(() => useBackendPatch(`/tutor/${props.data?.id}`));
 
 const post = postObject.post;
-const put = computed(() => putObject.value.patch);
+const patch = computed(() => patchObject.value.patch);
 
-const status = computed(() => props.data ? putObject.value.status.value : postObject.status.value);
-const loading = computed(() => props.data ? putObject.value.loading.value : postObject.loading.value);
+const status = computed(() => props.data ? patchObject.value.status.value : postObject.status.value);
+const loading = computed(() => props.data ? patchObject.value.loading.value : postObject.loading.value);
 
 const submitOnClick = async () => {
   if (props.data) {
-    await put.value({
+    await patch.value({
       name: name.value,
       age: age.value,
       picture: picture.value,
@@ -88,9 +88,5 @@ const submitOnClick = async () => {
 </template>
 
 <style scoped>
-.vertical-form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+
 </style>

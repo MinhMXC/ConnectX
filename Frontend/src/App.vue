@@ -68,4 +68,10 @@ p {
   flex-direction: column;
   gap: 10px;
 }
+
+.vertical-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 </style>

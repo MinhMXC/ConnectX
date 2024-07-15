@@ -133,6 +133,7 @@ func main() {
 	mux.HandleFunc("DELETE /request/{id}", AppHandler{context, deleteRequestByID}.ServeHTTP)
 
 	mux.HandleFunc("GET /qualification", AppHandler{context, getAllQualifications}.ServeHTTP)
+	mux.HandleFunc("GET /qualification/tutor/{id}", AppHandler{context, getQualificationByTutorID}.ServeHTTP)
 	mux.HandleFunc("GET /qualification/{id}", AppHandler{context, getQualificationByID}.ServeHTTP)
 	mux.HandleFunc("POST /qualification", AppHandler{context, createQualification}.ServeHTTP)
 	mux.HandleFunc("PATCH /qualification/{id}", AppHandler{context, updateQualification}.ServeHTTP)

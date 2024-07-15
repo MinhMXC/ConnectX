@@ -73,7 +73,11 @@ func userSetup(context *AppContext, w http.ResponseWriter, r *http.Request) (int
 	return http.StatusOK, nil
 }
 
-var getAllUsers = getAllItemsFactory[User]("user INNER JOIN base_user ON base_user.id = user.user_id", scanUserRows)
+var getAllUsers = getAllItemsFactory[User](
+	"user INNER JOIN base_user ON base_user.id = user.user_id",
+	noFilter,
+	scanUserRows,
+)
 
 var getUserByID = getItemByIDFactory[User]("user INNER JOIN base_user ON base_user.id = user.user_id", scanUserRow)
 

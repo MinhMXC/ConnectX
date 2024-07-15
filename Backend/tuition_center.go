@@ -40,7 +40,11 @@ func scanTuitionCenterRow(item *TuitionCenter, row *sql.Row) error {
 	return row.Scan(&item.ID, &item.Name, &item.Phone, &item.Picture, &item.Address, &item.AddressLink, &item.Description, &item.Website, &temp, &item.Email, &temp, &temp, &item.CreatedAt)
 }
 
-var getAllTuitionCenters = getAllItemsFactory[TuitionCenter]("tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id", scanTuitionCenterRows)
+var getAllTuitionCenters = getAllItemsFactory[TuitionCenter](
+	"tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id",
+	noFilter,
+	scanTuitionCenterRows,
+)
 
 var getTuitionCenterByID = getItemByIDFactory[TuitionCenter]("tuition_center INNER JOIN base_user ON base_user.id = tuition_center.user_id", scanTuitionCenterRow)
 

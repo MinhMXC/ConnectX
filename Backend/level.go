@@ -14,9 +14,13 @@ type LevelCreate struct {
 	Name string `json:"name"`
 }
 
-var getAllLevels = getAllItemsFactory[Level]("level", func(item *Level, rows *sql.Rows) error {
-	return rows.Scan(&item.ID, &item.Name)
-})
+var getAllLevels = getAllItemsFactory[Level](
+	"level",
+	noFilter,
+	func(item *Level, rows *sql.Rows) error {
+		return rows.Scan(&item.ID, &item.Name)
+	},
+)
 
 var createLevel = createItemFactory[Level, LevelCreate](
 	"level",
