@@ -18,6 +18,8 @@ import TuitionCenterEdit from "@/pages/tuition_center/TuitionCenterEdit.vue";
 import ChangePassword from "@/pages/auth/ChangePassword.vue";
 import QualificationCreate from "@/pages/qualification/QualificationCreate.vue";
 import QualificationEdit from "@/pages/qualification/QualificationEdit.vue";
+import RateCreate from "@/pages/rate/RateCreate.vue";
+import RateEdit from "@/pages/rate/RateEdit.vue";
 
 const routes = [
     { path: '/auth/login', component: Login },
@@ -44,6 +46,9 @@ const routes = [
 
     { path: '/qualification/create', component: QualificationCreate },
     { path: '/qualification/:id/edit', component: QualificationEdit },
+
+    { path: '/rate/create', component: RateCreate },
+    { path: '/rate/:id/edit', component: RateEdit },
 ];
 
 const router = createRouter({

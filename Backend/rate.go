@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 )
 
 type Rate struct {
@@ -22,17 +23,37 @@ type RateCreate struct {
 	TuitionCenterID *int    `json:"tuition_center_id"`
 }
 
+func scanRateRows(item *Rate, rows *sql.Rows) error {
+	return rows.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
+}
+
+func scanRateRow(item *Rate, row *sql.Row) error {
+	return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
+}
+
 var getAllRates = getAllItemsFactory[Rate](
 	"rate",
 	noFilter,
-	func(item *Rate, rows *sql.Rows) error {
-		return rows.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
-	},
+	scanRateRows,
 )
 
-var getRateByID = getItemByIDFactory[Rate]("rate", func(item *Rate, row *sql.Row) error {
-	return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
-})
+var getRateByID = getItemByIDFactory[Rate]("rate", scanRateRow)
+
+var getRateByTutorID = getAllItemsFactory[Rate](
+	"rate",
+	func(r *http.Request) string {
+		return fmt.Sprintf("tutor_id = %s", r.PathValue("id"))
+	},
+	scanRateRows,
+)
+
+var getRateByTuitionCenterID = getAllItemsFactory[Rate](
+	"rate",
+	func(r *http.Request) string {
+		return fmt.Sprintf("tuition_center_id = %s", r.PathValue("id"))
+	},
+	scanRateRows,
+)
 
 var createRate = createItemFactory[Rate, RateCreate](
 	"rate",
@@ -45,9 +66,7 @@ var createRate = createItemFactory[Rate, RateCreate](
 				item.Amount, item.IsOpen, item.SubjectID, *item.TuitionCenterID)
 		}
 	},
-	func(item *Rate, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
-	},
+	scanRateRow,
 )
 
 // TODO: add middleware to ensure that only one of tutor_id and tuition_center_id can be null
@@ -62,9 +81,7 @@ var updateRate = updateItemFactory[Rate, RateCreate](
 				item.Amount, item.IsOpen, item.SubjectID, *item.TuitionCenterID)
 		}
 	},
-	func(item *Rate, row *sql.Row) error {
-		return row.Scan(&item.ID, &item.Amount, &item.IsOpen, &item.SubjectID, &item.TutorID, &item.TuitionCenterID)
-	},
+	scanRateRow,
 )
 
 var deleteRateByID = deleteItemByIDFactory("rate")

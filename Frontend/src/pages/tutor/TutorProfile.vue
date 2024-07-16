@@ -9,15 +9,16 @@ import useLogout from "@/composables/useLogout.js";
 import {inject} from "vue";
 import useBackendDelete from "@/composables/useBackendDelete.js";
 import QualificationItem from "@/components/QualificationItem.vue";
+import RateItem from "@/components/RateItem.vue";
 
 const route = useRoute();
 const { logout } = useLogout();
 const { data, status } = useBackendGet(`/tutor/${route.params.id}`);
+const { data: rateData } = useBackendGet(`/rate/tutor/${route.params.id}`);
 const { data: qualificationData } = useBackendGet(`/qualification/tutor/${route.params.id}`);
 const { data: levelData } = useBackendGet(`/level`);
+const { data: subjectData } = useBackendGet("/subject");
 const $cookies = inject("$cookies");
-
-console.log(qualificationData.value);
 
 const editProfileOnClick = () => {
   router.push(`/tutor/${route.params.id}/edit`);
@@ -37,10 +38,10 @@ const editProfileOnClick = () => {
         <p class="other-info">Phone Number: {{ data.phone }}</p>
         <p class="other-info"><i>About me: </i><br /> {{ data.description }}</p>
 
-        <P class="other-info" style="margin-top: 30px">Qualifications: </P>
+        <p class="other-info" style="margin-top: 30px">Qualifications: </p>
         <div id="qualification-ctn" v-if="qualificationData !== null">
           <QualificationItem
-              v-for="(qualification, index) in qualificationData"
+              v-for="(qualification) in qualificationData"
               :key="qualification.id"
               :qualification="qualification"
               :levelData="levelData"
@@ -51,9 +52,29 @@ const editProfileOnClick = () => {
           <p style="font-size: 20px">NONE</p>
         </div>
 
-        <Button style="margin-top: 10px" @click="router.push('/qualification/create')">
+        <Button v-if="$cookies.get('email') === data.email" style="margin-top: 10px" @click="router.push('/qualification/create')">
           Add Qualification
         </Button>
+
+        <p class="other-info" style="margin-top: 30px">Rate: </p>
+        <div id="qualification-ctn" v-if="rateData !== null">
+          <RateItem
+              v-for="(rate) in rateData"
+              :key="rate.id"
+              :rate="rate"
+              :levelData="levelData"
+              :subjectData="subjectData"
+          />
+        </div>
+
+        <div v-if="subjectData === null">
+          <p style="font-size: 20px">NONE</p>
+        </div>
+
+        <Button v-if="$cookies.get('email') === data.email" style="margin-top: 10px" @click="router.push('/rate/create')">
+          Add Rate
+        </Button>
+
       </div>
     </div>
 

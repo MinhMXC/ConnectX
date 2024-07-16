@@ -122,6 +122,8 @@ func main() {
 
 	mux.HandleFunc("GET /rate", AppHandler{context, getAllRates}.ServeHTTP)
 	mux.HandleFunc("GET /rate/{id}", AppHandler{context, getRateByID}.ServeHTTP)
+	mux.HandleFunc("GET /rate/tutor/{id}", AppHandler{context, getRateByTutorID}.ServeHTTP)
+	mux.HandleFunc("GET /rate/tuition_center/{id}", AppHandler{context, getRateByTuitionCenterID}.ServeHTTP)
 	mux.HandleFunc("POST /rate", AppHandler{context, createRate}.ServeHTTP)
 	mux.HandleFunc("PATCH /rate/{id}", AppHandler{context, updateRate}.ServeHTTP)
 	mux.HandleFunc("DELETE /rate/{id}", AppHandler{context, deleteRateByID}.ServeHTTP)

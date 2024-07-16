@@ -6,10 +6,14 @@ import Button from "primevue/button";
 import router from "@/router.js";
 import useLogout from "@/composables/useLogout.js";
 import {inject} from "vue";
+import RateItem from "@/components/RateItem.vue";
 
 const route = useRoute();
 const { logout } = useLogout();
 const { data, status } = useBackendGet(`/tuition_center/${route.params.id}`);
+const { data: rateData } = useBackendGet(`/rate/tuition_center/${route.params.id}`);
+const { data: levelData } = useBackendGet(`/level`);
+const { data: subjectData } = useBackendGet("/subject");
 const $cookies = inject("$cookies");
 
 const editProfileOnClick = () => {
@@ -30,8 +34,26 @@ const editProfileOnClick = () => {
         <p class="other-info">Address: {{ data.address }}</p>
         <p class="other-info">Address Link: {{ data.address_link }}</p>
         <p class="other-info">Website: {{ data.website }}</p>
-
         <p class="other-info"><i>About us: </i><br /> {{ data.description }}</p>
+
+        <p class="other-info" style="margin-top: 30px">Rate: </p>
+        <div id="qualification-ctn" v-if="rateData !== null">
+          <RateItem
+              v-for="(rate) in rateData"
+              :key="rate.id"
+              :rate="rate"
+              :levelData="levelData"
+              :subjectData="subjectData"
+          />
+        </div>
+
+        <div v-if="subjectData === null">
+          <p style="font-size: 20px">NONE</p>
+        </div>
+
+        <Button v-if="$cookies.get('email') === data.email" style="margin-top: 10px" @click="router.push('/rate/create')">
+          Add Rate
+        </Button>
       </div>
     </div>
 

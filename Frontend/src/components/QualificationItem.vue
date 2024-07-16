@@ -10,9 +10,6 @@ const qualification = computed(() => props.qualification);
 const $cookies = inject("$cookies");
 const { deleteFn } = useBackendDelete(`/qualification/${qualification.value.id}`);
 
-console.log(qualification.value.tutor_id);
-console.log($cookies.get("user_id"));
-
 </script>
 
 <template>
