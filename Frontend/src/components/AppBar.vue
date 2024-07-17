@@ -12,8 +12,8 @@ const user_type = $cookies.get("user_type");
 const user_id = $cookies.get("user_id");
 const { logout } = useLogout();
 
-const user_type_string = user_type === 1 ? "User" : user_type === "2" ? "Tutor" : "Tuition Center";
-let user_type_url = user_type === 1 ? "user" : user_type === "2" ? "tutor" : "tuition_center";
+const user_type_string = user_type === "0" ? "User" : user_type === "1" ? "Tutor" : "Tuition Center";
+let user_type_url = user_type === "0" ? "user" : user_type === "1" ? "tutor" : "tuition_center";
 
 const menu = ref();
 const items = ref([
@@ -41,7 +41,7 @@ const toggle = (event) => {
 
 <template>
   <div id="app-bar" class="white-elevation">
-    <p style="font-size: 35px; font-weight: 600">ConnectX</p>
+    <p style="font-size: 35px; font-weight: 600" @click="router.push('/')">ConnectX</p>
     <div style="flex-grow: 1">&nbsp;</div>
     <p id="app-bar-user" class="white-elevation" v-if="email" @click="toggle">
       {{$cookies.get("email")}} | {{user_type_string}}

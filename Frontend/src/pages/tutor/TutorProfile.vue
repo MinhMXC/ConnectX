@@ -99,6 +99,4 @@ const editProfileOnClick = () => {
 #tutor-info {
   margin-left: 20px;
 }
-
-
 </style>

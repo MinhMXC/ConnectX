@@ -263,18 +263,22 @@ func setup() {
 
 	exec(db, "Seeding table 'base_user'",
 		`INSERT INTO base_user (email, password, user_type, created_at) VALUES
-		("Minh", "1234", 0, 1715872529), ("MinhTutor", "1234", 1, 1715872529), ("MinhTuitionCenter", "1234", 2, 1715872529)`)
+		("Minh", "a4e6d1c002f05325e8ac6259a2031f8bdf27f4221ce1b3c413df290e9892f185", 0, 1715872529), 
+		("MinhTutor", "a4e6d1c002f05325e8ac6259a2031f8bdf27f4221ce1b3c413df290e9892f185", 1, 1715872529), 
+		("MinhTuitionCenter", "a4e6d1c002f05325e8ac6259a2031f8bdf27f4221ce1b3c413df290e9892f185", 2, 1715872529), 
+		("MinhTutor2", "a4e6d1c002f05325e8ac6259a2031f8bdf27f4221ce1b3c413df290e9892f185", 1, 1715872529)
+		`)
 
 	exec(db, "Seeding table 'user'",
-		`INSERT INTO user (user_id, username, is_parent, gender) VALUES (1, 'minhmxc', false, false)`)
+		`INSERT INTO user (user_id, username, picture, is_parent, gender) VALUES (1, 'minhmxc', 'https://i.scdn.co/image/ab67616100005174f3bb04995cb61f04936424ee', false, false)`)
 
 	exec(db, "Seeding table 'tutor'",
-		`INSERT INTO tutor (user_id, name, age, phone, description, gender) VALUES
-    	(2, "Minh", 20, 12345678, "Hi my name is Minh and I play Final Fantasy", true)`)
+		`INSERT INTO tutor (user_id, name, age, picture, phone, description, gender) VALUES
+    	(2, "Minh", 20, "https://res.cloudinary.com/tuteria/image/upload/c_fit,h_627,q_80,w_1200/v1/landing_page_images/successful-teacher-2021-09-24-03-01-11-utc.jpg", 12345678, "Hi my name is Minh and I play Final Fantasy", true)`)
 
 	exec(db, "Seeding table 'tuition_center'",
-		`INSERT INTO tuition_center (user_id, name, phone, address, address_link, description, website) 
-		VALUES (3, "Minh's Academy of Excellence", 12345678, "19 Kent Ridge Crescent 119278", "https://g.co/kgs/d98nKNE", 
+		`INSERT INTO tuition_center (user_id, name, phone, picture, address, address_link, description, website) 
+		VALUES (3, "Minh's Academy of Excellence", 12345678, "https://static1.squarespace.com/static/592d012829687f03fe7f23ff/t/65e842e47e10007d19729b6e/1720061671489/", "19 Kent Ridge Crescent 119278", "https://g.co/kgs/d98nKNE", 
     	 "The school for top students only", "https://minhmxc.github.io/")`)
 
 	exec(db, "Seeding table 'qualification'",

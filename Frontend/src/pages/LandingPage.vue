@@ -5,8 +5,11 @@
         <span class="landingpage01-text38"><span>ConnectX</span></span>
         <div style="flex-grow: 1">&nbsp;</div>
         <div class="landingpage01-items">
-          <span class="landingpage01-text30 Bodytext" @click="$router.push('/teacher')">
-            <span>Teachers</span>
+          <span class="landingpage01-text30 Bodytext" @click="$router.push('/tutor')">
+            <span>Tutors</span>
+          </span>
+          <span class="landingpage01-text30 Bodytext" @click="$router.push('/tuition_center')">
+            <span>Tuition Centers</span>
           </span>
           <span class="landingpage01-text32 Bodytext">
             <span>Contact Us</span>

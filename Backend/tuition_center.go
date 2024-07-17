@@ -75,7 +75,7 @@ func tuitionCenterSetup(context *AppContext, w http.ResponseWriter, r *http.Requ
 		return http.StatusInternalServerError, err
 	}
 
-	_, err = context.db.Exec(fmt.Sprintf("UPDATE base_user SET user_type = 3 WHERE id = %d", user.ID))
+	_, err = context.db.Exec(fmt.Sprintf("UPDATE base_user SET user_type = 2 WHERE id = %d", user.ID))
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
