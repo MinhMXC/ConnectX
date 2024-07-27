@@ -15,7 +15,6 @@ app.use(PrimeVue, {
 });
 app.use(VueCookies, {
     expires: '30d',
-    secure: 'true',
     sameSite: 'Strict'
 });
 app.use(router);

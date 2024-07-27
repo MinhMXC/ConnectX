@@ -3,7 +3,6 @@ import Button from "primevue/button";
 import {inject, ref} from "vue";
 import router from "@/router.js";
 import Menu from "primevue/menu";
-import useBackendGet from "@/composables/useBackendGet.js";
 import useLogout from "@/composables/useLogout.js";
 
 const $cookies = inject("$cookies");
@@ -12,8 +11,8 @@ const user_type = $cookies.get("user_type");
 const user_id = $cookies.get("user_id");
 const { logout } = useLogout();
 
-const user_type_string = user_type === "0" ? "User" : user_type === "1" ? "Tutor" : "Tuition Center";
-let user_type_url = user_type === "0" ? "user" : user_type === "1" ? "tutor" : "tuition_center";
+const user_type_string = user_type === "0" ? "User" : user_type === "1" ? "Tutor" : user_type === "2" ? "Tuition Center" : "Not Setup";
+let user_type_url = user_type === "0" ? "user" : user_type === "1" ? "tutor" : user_type === "2" ? "tuition_center" : "";
 
 const menu = ref();
 const items = ref([
