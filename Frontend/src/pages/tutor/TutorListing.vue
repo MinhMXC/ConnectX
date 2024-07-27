@@ -1,6 +1,7 @@
 <script setup>
 import useBackendGet from "@/composables/useBackendGet.js";
 import Image from "primevue/image";
+import router from "@/router.js";
 
 const { data: tutorData } = useBackendGet("/tutor");
 </script>
@@ -8,7 +9,7 @@ const { data: tutorData } = useBackendGet("/tutor");
 <template>
   <p style="font-size: 30px; margin-top: 40px">Tutor Listing</p>
   <div class="white-elevation" :key="tutor.id" v-for="(tutor) in tutorData ?? []" style="padding: 20px; border-radius: 10px; margin-top: 30px">
-    <div style="display: flex;">
+    <div style="display: flex;" @click="() => router.push(`/tutor/${tutor.id}`)">
       <Image :src="tutor.picture" width="400px"/>
       <div id="tutor-info">
         <p id="name">{{ tutor.name }}</p>
