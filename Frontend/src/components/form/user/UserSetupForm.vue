@@ -1,6 +1,6 @@
 <script setup>
 import Checkbox from "primevue/checkbox";
-import {computed, ref, watch} from "vue";
+import {computed, inject, ref, watch} from "vue";
 import Button from "primevue/button";
 import CXSelect from "@/components/form_input/CXSelect.vue";
 import useBackendPost from "@/composables/useBackendPost.js";
@@ -33,6 +33,8 @@ const patch = computed(() => patchObject.value.patch);
 const status = computed(() => props.data ? patchObject.value.status.value : postObject.status.value);
 const loading = computed(() => props.data ? patchObject.value.loading.value : postObject.loading.value);
 
+const $cookies = inject("$cookies");
+
 const submitOnClick = async () => {
   if (props.data) {
     await patch.value({
@@ -54,6 +56,7 @@ const submitOnClick = async () => {
     });
 
     if (status.value === "Success") {
+      $cookies.set("user_type", "0");
       await router.push("/");
     }
   }

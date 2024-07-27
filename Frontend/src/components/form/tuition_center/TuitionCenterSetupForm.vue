@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from "vue";
+import {computed, inject, ref, watch} from "vue";
 import CXInputText from "@/components/form_input/CXInputText.vue";
 import CXInputNumber from "@/components/form_input/CXInputNumber.vue";
 import CXTextarea from "@/components/form_input/CXTextarea.vue";
@@ -38,6 +38,8 @@ const patch = computed(() => patchObject.value.patch);
 const status = computed(() => props.data ? patchObject.value.status.value : postObject.status.value);
 const loading = computed(() => props.data ? patchObject.value.loading.value : postObject.loading.value);
 
+const $cookies = inject("$cookies");
+
 const submitOnclick = async () => {
   if (props.data) {
     await patch.value({
@@ -65,6 +67,7 @@ const submitOnclick = async () => {
     });
 
     if (status.value === "Success") {
+      $cookies.set("user_type", "2");
       await router.push("/");
     }
   }
