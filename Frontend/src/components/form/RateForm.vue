@@ -52,7 +52,6 @@ watch(level, (newData) => {
 });
 
 const submitOnClick = async () => {
-  console.log(amount.value);
   const uploadData = {
     amount: amount.value,
     is_open: isOpen.value === "Yes",
@@ -61,9 +60,9 @@ const submitOnClick = async () => {
   };
 
 
-  if (Number($cookies.get("user_type")) === 2) {
+  if ($cookies.get("user_type") === "1") {
     uploadData.tutor_id = Number($cookies.get("user_id"));
-  } else if (Number($cookies.get("user_type")) === 3) {
+  } else if ($cookies.get("user_type") === "2") {
     uploadData.tuition_center_id = Number($cookies.get("user_id"));
   }
 
